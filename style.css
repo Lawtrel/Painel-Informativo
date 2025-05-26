@@ -1,0 +1,86 @@
+/* Reset básico e configurações gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Garante que padding e bordas não aumentem o tamanho */
+}
+
+html, body {
+    height: 100%; /* Faz com que o HTML e o Body ocupem 100% da altura */
+    width: 100%;  /* Faz com que o HTML e o Body ocupem 100% da largura */
+    font-family: Arial, sans-serif; /* Uma fonte padrão e limpa */
+    background-color: #f0f0f0; /* Cor de fundo geral (caso algo falhe) */
+    overflow: hidden; /* Esconde barras de rolagem */
+}
+
+/* O container principal do painel */
+#painel-container {
+    position: relative; /* Necessário para posicionar as telas dentro dele */
+    width: 100%;
+    height: 100%;
+}
+
+/* Estilo base para todas as telas */
+.tela {
+    position: absolute; /* Permite que as telas se sobreponham */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* Esconde todas as telas por padrão - MUITO IMPORTANTE! */
+    padding: 40px;
+    color: #333; /* Cor do texto padrão */
+    /* Animação suave de entrada (opcional, mas fica bom) */
+    animation: fadeIn 1s;
+}
+
+/* Estilo para a tela que está ATIVA (visível) - MUITO IMPORTANTE! */
+.tela.ativa {
+    display: flex; /* Usamos flexbox para alinhar o conteúdo */
+    flex-direction: column; /* Conteúdo em coluna (bom para vertical) */
+    justify-content: center; /* Centraliza verticalmente */
+    align-items: center; /* Centraliza horizontalmente */
+    text-align: center; /* Centraliza o texto */
+}
+
+/* Cores de fundo diferentes para cada curso (exemplo) */
+#eng-software { background-color: #d0e0f0; }
+#eng-sanitaria { background-color: #d0f0d0; }
+#biologia { background-color: #f0f0d0; }
+#matematica { background-color: #f0d0f0; }
+#academicos-1, #academicos-2 { background-color: #e0e0e0; }
+
+/* Estilo para a área de conteúdo dentro de cada tela */
+.conteudo {
+    max-width: 90%; /* Limita a largura do conteúdo */
+}
+
+/* Estilo para o logo */
+.logo {
+    max-width: 150px; /* Tamanho máximo do logo */
+    margin-bottom: 30px; /* Espaço abaixo do logo */
+}
+
+/* Estilos para os títulos e parágrafos */
+h1 {
+    font-size: 3em; /* Tamanho do título principal */
+    margin-bottom: 20px;
+    color: #003366; /* Cor principal (ex: azul UNEB) */
+}
+
+h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+    color: #0055a4;
+}
+
+p {
+    font-size: 1.5em; /* Tamanho do texto */
+    line-height: 1.6; /* Espaçamento entre linhas */
+}
+
+/* Animação de Fade In (opcional) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
