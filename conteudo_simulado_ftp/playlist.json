@@ -1,0 +1,22 @@
+{
+  "versao": 0.1,
+  "ultima_atualizacao": "2025-05-29T12:00:00Z",
+  "config_geral": {
+    "url_base_midia_http": "http://localhost/ppgmsbPainel_local_test/conteudo_simulado_ftp/"
+  },
+  "monitores": [
+    {
+      "id_monitor": 0,
+      "itens": [
+        { "tipo": "imagem", "arquivo": "sample_image1.png", "duracao_s": 10 },
+        { "tipo": "texto_simples", "mensagem": "Bem-vindo ao Teste!", "cor_fundo": "#0000FF", "cor_texto": "#FFFFFF", "duracao_s": 5 }
+      ]
+    },
+    {
+      "id_monitor": 1,
+      "itens": [
+        { "tipo": "imagem", "arquivo": "sample_image2.png", "duracao_s": 12 }
+      ]
+    }
+  ]
+}

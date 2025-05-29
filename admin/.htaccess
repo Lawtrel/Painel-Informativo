@@ -1,5 +1,5 @@
 # admin/.htaccess
-AuthType Basic
-AuthName "Painel de Administração Restrito"
-AuthUserFile /caminho/completo/no/servidor/para/.htpasswd 
-Require valid-user
+#AuthType Basic
+#AuthName "Painel de Administração Restrito"
+#AuthUserFile /caminho/completo/no/servidor/para/.htpasswd 
+#Require valid-user

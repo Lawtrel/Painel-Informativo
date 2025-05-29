@@ -1,0 +1,52 @@
+/* client_display/display.css */
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #222;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden; /* Para evitar barras de rolagem se o conteúdo for maior */
+}
+
+.display-container {
+    text-align: center;
+}
+
+.loading-message {
+    font-size: 1.5em;
+}
+
+.monitor-screen {
+    width: 800px; /* Largura da tela simulada */
+    height: 450px; /* Altura da tela simulada (proporção 16:9) */
+    border: 3px solid #555;
+    background-color: #000;
+    overflow: hidden; /* Conteúdo que exceder não será mostrado */
+    position: relative; /* Para posicionamento absoluto de itens internos, se necessário */
+    margin: 10px auto; /* Centraliza se houver espaço */
+    display: flex; /* Para centralizar conteúdo interno */
+    justify-content: center;
+    align-items: center;
+}
+
+.monitor-screen img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Ou 'cover' dependendo do efeito desejado */
+}
+
+.monitor-screen .text-item {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box; /* Para que padding não aumente o tamanho */
+    text-align: center;
+    font-size: 2em; /* Tamanho de exemplo */
+    overflow-wrap: break-word; /* Quebra palavras longas */
+}
