@@ -1,41 +1,113 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdminPainel - Teste Local</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AdminPainel -  Painel Informativo</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
 <body>
-    <div class="container">
-        <h1>AdminPainel - Teste Local (Simulado)</h1>
+<header class="uneb-header">
+    <div class="logo"></div>
+    <h1>Painel Informativo </h1>
+</header>
 
-        <h2>Playlist Atual:</h2>
-        <textarea id="playlistJsonArea" readonly title="Playlist atual (somente leitura aqui, modificada por ações)"></textarea>
-        <button id="loadPlaylistBtn">Carregar Playlist Atual</button>
+<div class="admin-layout">
+    <aside class="sidebar">
+        <nav>
+            <ul>
+                <li><a href="#playlist" class="active">Adicionar Conteudo</a></li>
+            </ul>
+        </nav>
+    </aside>
 
-        <div class="item-editor">
-            <h2>Adicionar Novo Item ao Monitor 0 (Exemplo)</h2>
-            <label for="itemTipo">Tipo:</label>
-            <input type="text" id="itemTipo" value="imagem" placeholder="imagem, video, texto_simples">
-            
-            <label for="itemArquivo">Arquivo (ex: nova_imagem.jpg):</label>
-            <input type="text" id="itemArquivo" value="nova_imagem.jpg">
-            
-            <label for="itemMensagem">Mensagem (para tipo texto_simples):</label>
-            <input type="text" id="itemMensagem" value="Nova Mensagem!">
+    <main class="content-area">
+        <section id="playlist" class="mb-2">
+            <h2>Adicionar conteudo aos monitores</h2>
 
-            <label for="itemDuracao">Duração (segundos):</label>
-            <input type="number" id="itemDuracao" value="10">
-            
-            <button id="addItemBtn">Adicionar Item ao Monitor 0</button>
-        </div>
+            <div class="playlist-preview">
+                <div class="playlist-header">
+                    <h3>Reprodução Atual</h3>
+                    <div class="playlist-stats">
+                        <span id="totalItems">0 conteudos</span> •
+                        <span id="totalMonitors">0 monitores</span>
+                    </div>
+                </div>
+                <div class="monitors-grid" id="monitorsGrid">
+                    <div class="empty-monitor">
+                        <p>Nenhum item adicionado ainda</p>
+                        <p>Use o formulário abaixo para começar</p>
+                    </div>
+                </div>
+            </div>
 
-        <hr style="margin: 20px 0;">
-        <button id="savePlaylistBtn">Salvar Playlist no Servidor (Simulado)</button>
-        
-        <div id="statusMessage" class="status" style="display:none;"></div>
-    </div>
+            <div class="admin-form">
+                <fieldset>
+                    <legend>2. Adicionar Novo Item ao Monitor</legend>
+                    <div class="item-editor-grid">
+                        <div class="form-group">
+                            <label for="itemTipo">Tipo de Conteúdo:</label>
+                            <select id="itemTipo">
+                                <option value="imagem">Imagem</option>
+                                <option value="texto_simples">Texto Simples</option>
+                            </select>
+                        </div>
 
-    <script src="script.js"></script></body>
-</html>
+                        <div class="form-group">
+                            <label for="itemDuracao">Duração (segundos):</label>
+                            <input type="number" id="itemDuracao" value="10" min="1" max="3600">
+                        </div>
+                    </div>
+
+                    <div id="fileInputGroup" class="form-group">
+                        <label for="itemArquivo">Nome do Arquivo:</label>
+                        <input type="text" id="itemArquivo" value="nova_imagem.jpg"
+                               placeholder="ex: evento_corporativo.jpg">
+                        <span class="form-instructions">Digite o nome completo do arquivo (incluindo extensão) que será exibido no monitor.</span>
+                    </div>
+
+                    <div id="textInputGroup" class="form-group" style="display: none;">
+                        <label for="itemMensagem">Mensagem de Texto:</label>
+                        <input type="text" id="itemMensagem" value="Nova Mensagem Corporativa!"
+                               placeholder="Digite a mensagem que será exibida">
+                        <span class="form-instructions">Esta mensagem será exibida como texto simples no monitor selecionado.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monitorTarget">Monitor de Destino:</label>
+                        <select id="monitorTarget">
+                            <option value="0">Monitor 1 (N lembro 1)</option>
+                            <option value="1">Monitor 2 (N lembro 2)</option>
+                            <option value="2">Monitor 3 (N lembro 3)</option>
+                            <option value="3">Monitor 4 (N lembro 4)</option>
+                            <option value="4">Monitor 5 (N lembro 5)</option>
+                            <option value="5">Monitor 6 (N lembro 6)</option>
+                        </select>
+                    </div>
+
+                    <button id="addItemBtn" class="btn btn-primary">Adicionar ao monitor</button>
+                </fieldset>
+            </div>
+
+            <div class="admin-form">
+                <fieldset>
+                    <legend>3. Salvar Alterações</legend>
+                    <p style="margin-bottom: 1rem; color: #666;">
+                        Após adicionar todos os itens desejados, salve as alterações no servidor para que sejam aplicadas aos monitores.
+                    </p>
+                    <button id="savePlaylistBtn" class="btn btn-success">Salvar</button>
+                </fieldset>
+            </div>
+
+            <div id="statusMessage" class="status" style="display:none;"></div>
+        </section>
+    </main>
+</div>
+
+<footer class="uneb-footer">
+    <p>&copy;Universidade do Estado da Bahia (UNEB) - Todos os direitos reservados.</p>
+    <p>Sistema de Gestão do Mural Digital.</p>
+</footer>
+
+    <script src="script.js"></script>
+</body>
