@@ -5,13 +5,6 @@ class UploadManager {
       MAX: 3600,
       PADRAO: 10
     },
-    CORES_PADRAO: {
-      TEXTO: '#FFFFFF',
-      FUNDO: '#333333'
-    },
-    EXTENSOES_VALIDAS: {
-      imagem: ['.jpg', '.jpeg', '.png', '.gif'],
-    },
     STATUS_TIMEOUT: 5000
   };
 
@@ -26,11 +19,9 @@ class UploadManager {
     this.elements = {
       itemTipo: document.getElementById("itemTipo"),
       itemArquivo: document.getElementById("itemArquivo"),
-      itemMensagem: document.getElementById("itemMensagem"),
       itemDuracao: document.getElementById("itemDuracao"),
       monitorTarget: document.getElementById("monitorTarget"),
       fileInputGroup: document.getElementById("fileInputGroup"),
-      textInputGroup: document.getElementById("textInputGroup"),
 
       // Buttons
       addItemBtn: document.getElementById("addItemBtn"),
@@ -47,11 +38,6 @@ class UploadManager {
   }
 
   attachEventListeners() {
-    // Content type change handler
-    this.elements.itemTipo.addEventListener("change", () =>
-        this.handleContentTypeChange()
-    );
-
     // Button click handlers
     this.elements.addItemBtn.addEventListener("click", () =>
         this.addItemToPlaylist()
@@ -65,34 +51,26 @@ class UploadManager {
         this.validateDuration(e)
     );
 
-    // Delegate click events for removing items
-    this.elements.monitorsGrid.addEventListener("click", (e) => {
-      const removeBtn = e.target.closest(".btn-danger");
-      if (removeBtn) {
-        const item = removeBtn.closest(".playlist-item");
-        const monitorId = parseInt(removeBtn.dataset.monitorId);
-        const itemId = parseFloat(removeBtn.dataset.itemId);
-        this.removeItem(monitorId, itemId);
-      }
-    });
+    // Tipo de conteúdo change handler
+    this.elements.itemTipo.addEventListener("change", () =>
+        this.updatePlaceholder()
+    );
+  }
+
+  updatePlaceholder() {
+    const tipo = this.elements.itemTipo.value;
+    const placeholders = {
+      imagem: "ex: imagem.jpg, foto.png",
+      video: "ex: video.mp4"
+    };
+    this.elements.itemArquivo.placeholder = placeholders[tipo] || "";
+
+    this.elements.itemArquivo.value = tipo === "video" ? "video.mp4" : "imagem.jpg";
   }
 
   async init() {
     await this.fetchPlaylist();
-    this.handleContentTypeChange();
     this.updatePlaylistPreview();
-  }
-
-  handleContentTypeChange() {
-    const isText = this.elements.itemTipo.value === "texto_simples";
-    this.elements.fileInputGroup.style.display = isText ? "none" : "block";
-    this.elements.textInputGroup.style.display = isText ? "block" : "none";
-  }
-
-  validateDuration(e) {
-    const value = parseInt(e.target.value);
-    if (value < UploadManager.CONFIG.DURACAO.MIN) e.target.value = UploadManager.CONFIG.DURACAO.MIN;
-    if (value > UploadManager.CONFIG.DURACAO.MAX) e.target.value = UploadManager.CONFIG.DURACAO.MAX;
   }
 
   async apiPost(url, data) {
@@ -154,95 +132,81 @@ class UploadManager {
     const tipo = this.elements.itemTipo.value;
     const duracao = parseInt(this.elements.itemDuracao.value) || UploadManager.CONFIG.DURACAO.PADRAO;
 
-    const baseItem = {
+    return {
       tipo,
       duracao_s: duracao,
       id: Date.now() + Math.random(),
-      isNew: true
-    };
-
-    if (tipo === "texto_simples") {
-      return {
-        ...baseItem,
-        mensagem: this.elements.itemMensagem.value.trim() || "Texto Padrão",
-        cor_fundo: UploadManager.CONFIG.CORES_PADRAO.FUNDO,
-        cor_texto: UploadManager.CONFIG.CORES_PADRAO.TEXTO,
-      };
-    }
-
-    return {
-      ...baseItem,
-      arquivo: this.elements.itemArquivo.value.trim() || "imagem_padrao.jpg",
+      isNew: true,
+      arquivo: this.elements.itemArquivo.value
     };
   }
 
   validateFormData() {
-    const tipo = this.elements.itemTipo.value;
     const duracao = parseInt(this.elements.itemDuracao.value);
+    const arquivo = this.elements.itemArquivo.value.trim();
+    const tipo = this.elements.itemTipo.value;
 
     if (!duracao || duracao < 1 || duracao > 3600) {
       this.displayStatus("A duração deve estar entre 1 e 3600 segundos", "error");
       return false;
     }
 
-    if (tipo === "texto_simples") {
-      const mensagem = this.elements.itemMensagem.value.trim();
-      if (!mensagem) {
-        this.displayStatus("A mensagem não pode estar vazia", "error");
-        return false;
-      }
-    } else {
-      const arquivo = this.elements.itemArquivo.value.trim();
-      if (!arquivo) {
-        this.displayStatus("O nome do arquivo não pode estar vazio", "error");
-        return false;
-      }
+    if (!arquivo) {
+      this.displayStatus("Por favor, digite o nome do arquivo", "error");
+      return false;
+    }
 
-      const extensao = arquivo.toLowerCase().slice(arquivo.lastIndexOf('.'));
-      if (!UploadManager.CONFIG.EXTENSOES_VALIDAS[tipo].includes(extensao)) {
-        this.displayStatus(`Extensão inválida para ${tipo}. Use: ${UploadManager.CONFIG.EXTENSOES_VALIDAS[tipo].join(', ')}`, "error");
-        return false;
-      }
+    // Validar extensões de arquivo
+    const extensoesValidas = {
+      imagem: ['.jpg', '.jpeg', '.png', '.gif'],
+      video: ['.mp4', '.webm', '.mov']
+    };
+
+    const extensao = '.' + arquivo.split('.').pop().toLowerCase();
+    if (!extensoesValidas[tipo].includes(extensao)) {
+      this.displayStatus(`Extensão inválida para ${tipo}. Use: ${extensoesValidas[tipo].join(', ')}`, "error");
+      return false;
     }
 
     return true;
   }
 
-  addItemToPlaylist() {
+  async addItemToPlaylist() {
     if (!this.validateFormData()) {
       return;
     }
 
-    if (!this.currentPlaylist?.monitores) {
-      this.currentPlaylist = {monitores: []};
+    try {
+      if (!this.currentPlaylist?.monitores) {
+        this.currentPlaylist = {monitores: []};
+      }
+
+      const monitorId = parseInt(this.elements.monitorTarget.value);
+      let monitor = this.currentPlaylist.monitores.find(
+          (m) => m.id_monitor === monitorId
+      );
+
+      if (!monitor) {
+        monitor = {id_monitor: monitorId, itens: []};
+        this.currentPlaylist.monitores.push(monitor);
+      }
+
+      const newItem = this.buildItemFromForm();
+      monitor.itens.push(newItem);
+      this.currentPlaylist.ultima_atualizacao = new Date().toISOString();
+
+      this.displayStatus(`Item adicionado ao Monitor ${monitorId + 1} com sucesso!`, "success");
+      this.updatePlaylistPreview();
+
+      this.clearForm();
+    } catch (error) {
+      this.displayStatus(`Erro ao adicionar item: ${error.message}`, "error");
     }
-
-    const monitorId = parseInt(this.elements.monitorTarget.value);
-    let monitor = this.currentPlaylist.monitores.find(
-        (m) => m.id_monitor === monitorId
-    );
-
-    if (!monitor) {
-      monitor = {id_monitor: monitorId, itens: []};
-      this.currentPlaylist.monitores.push(monitor);
-    }
-
-    const newItem = this.buildItemFromForm();
-    monitor.itens.push(newItem);
-    this.currentPlaylist.ultima_atualizacao = new Date().toISOString();
-
-    this.displayStatus(`Item adicionado ao Monitor ${monitorId + 1} com sucesso!`, "success");
-    this.updatePlaylistPreview();
-
-    this.clearForm();
   }
 
   clearForm() {
-    if (this.elements.itemTipo.value !== "texto_simples") {
-      this.elements.itemArquivo.value = "";
-    } else {
-      this.elements.itemMensagem.value = "";
-    }
+    const tipo = this.elements.itemTipo.value;
+    this.elements.itemArquivo.value = tipo === "video" ? "video.mp4" : "imagem.jpg";
     this.elements.itemDuracao.value = "10";
   }
 
@@ -311,38 +275,39 @@ class UploadManager {
   }
 
   createItemHtml(item, monitorId) {
-    const displayName = item.tipo === 'texto_simples'
-        ? item.mensagem
-        : item.arquivo;
-
-    const previewHtml = item.tipo === 'imagem'
-        ? `<div class="item-preview">
-             <img src="../conteudo_simulado_ftp/${item.arquivo}" 
-                  alt="${item.arquivo}"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
-                  loading="lazy">
-             <span class="preview-fallback" style="display:none;">
-               ${item.arquivo}
-             </span>
-           </div>`
-        : '';
+    const previewHtml = `
+            <div class="item-preview">
+                ${item.tipo === 'video' ? `
+                    <video width="100%" style="max-height: 120px;" controls>
+                        <source src="../conteudo_simulado_ftp/${item.arquivo}" type="video/${item.arquivo.split('.').pop()}">
+                        Seu navegador não suporta o elemento de vídeo.
+                    </video>` : `
+                    <img src="../conteudo_simulado_ftp/${item.arquivo}" 
+                         alt="${item.arquivo}"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
+                         loading="lazy">
+                `}
+                <span class="preview-fallback" style="display:none;">
+                    ${item.arquivo}
+                </span>
+            </div>`;
 
     return `
-      <div class="playlist-item ${item.isNew ? 'new-item' : ''}">
-        <div class="item-info">
-          <span class="item-type ${item.tipo}">${item.tipo.replace('_', ' ')}</span>
-          ${previewHtml}
-          <div class="item-title">${displayName}</div>
-          <div class="item-duration">${item.duracao_s}s</div>
-        </div>
-        <div class="item-actions">
-          <button class="btn btn-danger btn-small" data-monitor-id="${monitorId}" data-item-id="${item.id}">
-            <span aria-hidden="true">&times;</span>
-            <span class="sr-only">Remover item</span>
-          </button>
-        </div>
-      </div>
-    `;
+            <div class="playlist-item ${item.isNew ? 'new-item' : ''}">
+                <div class="item-info">
+                    <span class="item-type ${item.tipo}">${item.tipo}</span>
+                    ${previewHtml}
+                    <div class="item-title">${item.arquivo}</div>
+                    <div class="item-duration">${item.duracao_s}s</div>
+                </div>
+                <div class="item-actions">
+                    <button class="btn btn-danger btn-small" data-monitor-id="${monitorId}" data-item-id="${item.id}">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Remover item</span>
+                    </button>
+                </div>
+            </div>
+        `;
   }
 
   async savePlaylist() {
