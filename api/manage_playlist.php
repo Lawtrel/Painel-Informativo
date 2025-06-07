@@ -3,6 +3,17 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/config.php';
 
+session_start(); // inicia a sessão
+
+// Verifica se o usuário está logado
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    $response['success'] = false;
+    $response['message'] = 'Acesso não autorizado. Por favor, faça login.';
+    header('HTTP/1.0 401 Unauthorized'); // Retorna status de não autorizado
+    echo json_encode($response);
+    exit();
+}
+
 $response = ['success' => false, 'message' => ''];
 $playlist_file_path = SIMULATED_FTP_DIR . PLAYLIST_FILENAME;
 
