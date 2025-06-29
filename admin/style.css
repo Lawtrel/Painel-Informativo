@@ -66,3 +66,39 @@ button:hover {
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
+/* --- NOVOS ESTILOS PARA DRAG-AND-DROP --- */
+#dropZone {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 40px;
+    text-align: center;
+    color: #aaa;
+    margin-top: 20px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+#dropZone.dragover {
+    background-color: #e9f5ff;
+    border-color: #007bff;
+    color: #007bff;
+}
+
+#uploadStatus ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#uploadStatus li {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+#uploadStatus li.success {
+    color: #155724;
+}
+
+#uploadStatus li.error {
+    color: #721c24;
+    font-weight: bold;
+}
