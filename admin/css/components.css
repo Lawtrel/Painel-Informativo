@@ -1,0 +1,248 @@
+/* ===== SEÇÕES ===== */
+.content-section, .monitors-section, .actions-section {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+}
+
+.section-header {
+    margin-bottom: var(--spacing-xl);
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.section-header p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* ===== FORMULÁRIO ===== */
+.content-form {
+    max-width: 800px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.form-control {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    background: var(--bg-secondary);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-control.invalid {
+    border-color: var(--error-500);
+}
+
+.duration-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.duration-unit {
+    position: absolute;
+    right: var(--spacing-2xl);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    pointer-events: none;
+}
+
+.form-help {
+    display: block;
+    margin-top: var(--spacing-sm);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.field-error {
+    color: var(--error-500);
+    font-size: 0.75rem;
+    margin-top: var(--spacing-sm);
+}
+
+/* ===== BOTÕES ===== */
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--gradient-button-primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--gradient-button-hover);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-light);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--bg-tertiary);
+    border-color: var(--border-medium);
+}
+
+.btn-success {
+    background: var(--gradient-button-success);
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    background: var(--gradient-success);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: var(--error-500);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: var(--error-600);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-muted);
+    border: 2px solid var(--border-light);
+}
+
+.btn-outline:hover {
+    background: var(--bg-primary);
+    border-color: var(--border-medium);
+}
+
+.btn-small {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.75rem;
+}
+
+/* ===== ESTADOS VAZIOS ===== */
+.empty-state, .loading-state {
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    color: var(--text-muted);
+}
+
+.empty-state i, .loading-state i {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+.empty-state h3, .loading-state h3 {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+}
+
+.empty-monitor {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ===== PAINEL DE AÇÕES ===== */
+.actions-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-xl);
+}
+
+.action-info {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    flex: 1;
+}
+
+.action-info i {
+    color: var(--primary-500);
+    font-size: 1.25rem;
+    margin-top: var(--spacing-xs);
+}
+
+.action-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.action-info p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.action-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+} 
