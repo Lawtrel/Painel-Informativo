@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mestrado</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="titulo">
+        <div class="logos-container">
+            <img src="assets/logoUNEB.png" alt="Logo UNEB" class="header-logo">
+            <img src="assets/logoPPGMSB.png" alt="Logo PPGMSB" class="header-logo">
+        </div>
+        </header>
+
+    <main class="conteudo">
+        <section class="informacoes-mestrado">
+            <h2>MESTRADO</h2>
+            <p><strong>TÍTULO DA TESE:</strong> <span id="tituloTese">N/A</span></p>
+            <p><strong>AUTOR:</strong> <span id="autorTese">N/A</span></p>
+            <p><strong>ORIENTADOR:</strong> <span id="orientadorTese">N/A</span></p>
+            <p><strong>CURSO:</strong> <span id="cursoMestrado">N/A</span></p>
+        </section>
+
+        <div class="carousel-container">
+            <h3>Autores</h3>
+            <div class="carousel-wrapper">
+                <div class="carousel-item">
+                    <img src="assets/fotoPerfil_Ilustrativa.png" alt="Autor Padrão">
+                    <p>Autor Padrão 1</p>
+                </div>
+                <div class="carousel-item">
+                    <img src="assets/fotoPerfil_Ilustrativa.png" alt="Autor Padrão">
+                    <p>Autor Padrão 2</p>
+                </div>
+            </div>
+            <button class="carousel-button prev" onclick="moveCarousel(-1)">&#10094;</button>
+            <button class="carousel-button next" onclick="moveCarousel(1)">&#10095;</button>
+        </div>
+    </main>
+
+    <footer class="qrCode">
+        <img id="qrCodeImg" src="assets/qrcodeIlustrativo.png" alt="QR Code do artigo">
+        <p>Escaneie para acessar o artigo completo!</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
