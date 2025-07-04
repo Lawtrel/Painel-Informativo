@@ -10,7 +10,7 @@ define('PLAYLIST_FILENAME', 'playlist.json');
 // URL base para acessar os arquivos de mídia via HTTP (SE APLICÁVEL)
 // Se os arquivos FTP não são acessíveis via HTTP, deixe vazio ou comente,
 // e o Pi terá que baixar via FTP.
-define('HTTP_MEDIA_BASE_URL', 'http://localhost/ppgmsbPainel_local_test/conteudo_simulado_ftp/'); 
+define('HTTP_MEDIA_BASE_URL', 'http://localhost/Painel-Informativo/conteudo_simulado_ftp/');
 
 // Para o painel de administração (autenticação básica)
 define('ADMIN_USERNAME', 'admin_painel');
