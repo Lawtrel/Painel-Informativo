@@ -74,7 +74,7 @@ export default function MonitorsStatus({ monitores, loading }) {
 
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><i className="fas fa-tv"></i> Status dos Monitores</h2>
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#003366]"><i className="fas fa-tv"></i> Status dos Monitores</h2>
       {monitores.length === 0 ? (
         <div className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center min-h-[180px]">
           <i className="fas fa-tv text-4xl text-gray-300 mb-2"></i>
