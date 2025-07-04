@@ -24,7 +24,38 @@ export function usePlaylistManager() {
       });
   }, []);
 
-  // Adicionar item à playlist
+  function createPlaylistItem({
+    arquivo,
+    tipo,
+    duracao_s,
+    monitorId,
+    file = undefined,
+    isNew = true,
+    status = 'pendente',
+    data_criacao = new Date().toISOString(),
+    preview_url = null,
+    file_size = undefined,
+    file_type = undefined,
+    mensagem = undefined
+  }) {
+    return {
+      id: Date.now() + Math.random(),
+      arquivo,
+      tipo,
+      duracao_s,
+      monitorId: parseInt(monitorId),
+      file,
+      isNew,
+      status, // 'pendente', 'enviado', 'erro'
+      data_criacao,
+      preview_url,
+      file_size,
+      file_type,
+      mensagem
+    };
+  }
+
+  // Adicionar item à playlist (apenas local, sem upload)
   async function addItemToPlaylist(itemData) {
     if (itemData.monitorId === undefined || itemData.monitorId === null) {
       setStatus({ message: 'monitorId não informado ao adicionar conteúdo', type: 'error' });
@@ -39,26 +70,27 @@ export function usePlaylistManager() {
     }
     setLoading(true);
     try {
-      // Simular upload
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
       // Criar URL de preview se for uma imagem ou vídeo
       let previewUrl = null;
       if (itemData.file && (itemData.tipo === 'imagem' || itemData.tipo === 'video')) {
         previewUrl = URL.createObjectURL(itemData.file);
       }
-      
-      const newItem = {
-        ...itemData,
-        id: Date.now() + Math.random(),
+      const newItem = createPlaylistItem({
+        arquivo: itemData.arquivo,
+        tipo: itemData.tipo,
+        duracao_s: itemData.duracao_s,
+        monitorId: itemData.monitorId,
+        file: itemData.file,
         isNew: true,
+        status: 'pendente',
         data_criacao: new Date().toISOString(),
-        preview_url: previewUrl
-      };
-
+        preview_url: previewUrl,
+        file_size: itemData.file_size,
+        file_type: itemData.file_type,
+        mensagem: itemData.mensagem
+      });
       setPlaylist(prev => {
         const existingMonitor = prev.monitores.find(m => m.id_monitor === monitorId);
-        
         if (existingMonitor) {
           return {
             ...prev,
@@ -77,10 +109,9 @@ export function usePlaylistManager() {
           };
         }
       });
-
       const monitorObj = MONITORES.find(m => parseInt(m.value) === monitorId);
       const monitorName = monitorObj ? monitorObj.label : `Monitor ${monitorId + 1}`;
-      setStatus({ message: `Conteúdo "${itemData.arquivo}" adicionado ao ${monitorName} com sucesso!`, type: 'success' });
+      setStatus({ message: `Conteúdo "${itemData.arquivo}" adicionado ao ${monitorName} (ainda não enviado).`, type: 'success' });
     } catch (error) {
       setStatus({ message: `Erro ao adicionar conteúdo: ${error.message}`, type: 'error' });
     } finally {
@@ -121,15 +152,41 @@ export function usePlaylistManager() {
 
   // Salvar playlist
   async function savePlaylist() {
-    if (!playlist.monitores.length) {
-      setStatus({ message: 'Nenhum conteúdo para salvar. Adicione conteúdo primeiro.', type: 'warning' });
+    const itensPendentes = playlist.monitores.flatMap(m => (m.itens || []).filter(item => item.isNew && item.file));
+    if (itensPendentes.length === 0) {
+      setStatus({ message: 'Nenhum novo conteúdo para enviar. Adicione novos arquivos antes de salvar.', type: 'warning' });
       return;
     }
-
     setLoading(true);
     try {
-      // Simular chamada da API
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Para cada monitor, para cada item novo, faz upload
+      let updatedMonitores = await Promise.all(playlist.monitores.map(async monitor => {
+        const updatedItens = await Promise.all((monitor.itens || []).map(async item => {
+          if (item.isNew && item.file) {
+            // Upload real
+            const formData = new FormData();
+            formData.append('filesToUpload[]', item.file, item.arquivo);
+            const res = await fetch('/Painel-Informativo/admin/upload_handler.php', {
+              method: 'POST',
+              body: formData
+            });
+            const uploadResponse = await res.json();
+            if (!uploadResponse.success || !uploadResponse.uploaded_files || !uploadResponse.uploaded_files[0] || uploadResponse.uploaded_files[0].status !== 'success') {
+              return { ...item, status: 'erro' };
+            }
+            return {
+              ...item,
+              arquivo: uploadResponse.uploaded_files[0].filename,
+              isNew: false,
+              file: undefined,
+              status: 'enviado'
+            };
+          }
+          return item;
+        }));
+        return { ...monitor, itens: updatedItens };
+      }));
+      setPlaylist(prev => ({ ...prev, monitores: updatedMonitores, ultima_atualizacao: new Date().toISOString() }));
       setStatus({ message: 'Alterações salvas com sucesso! Os monitores serão atualizados em breve.', type: 'success' });
     } catch (error) {
       setStatus({ message: `Erro ao salvar: ${error.message}`, type: 'error' });

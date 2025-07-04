@@ -117,6 +117,18 @@ export default function MonitorsStatus({ monitores, loading }) {
                           {item.mensagem && item.tipo === 'texto_simples' && (
                             <span className="text-xs text-gray-500 truncate max-w-[140px]">{item.mensagem}</span>
                           )}
+                          {/* status do upload */}
+                          {item.status && (
+                            <span className={`inline-block text-xs font-bold rounded px-2 py-0.5 mb-1 w-fit ml-1
+                              ${item.status === 'pendente' ? 'bg-yellow-100 text-yellow-800' : ''}
+                              ${item.status === 'enviado' ? 'bg-green-100 text-green-800' : ''}
+                              ${item.status === 'erro' ? 'bg-red-100 text-red-800' : ''}
+                            `}>
+                              {item.status === 'pendente' && 'Pendente'}
+                              {item.status === 'enviado' && 'Enviado'}
+                              {item.status === 'erro' && 'Erro'}
+                            </span>
+                          )}
                         </div>
                       </div>
                       {/* separetor */}
