@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useFileManager } from '../hooks/useFileManager';
-import PreviewModal from './PreviewModal';
-import FileDropzone from './FileDropzone';
-import FilePreview from './FilePreview';
-import MonitorSelect from './MonitorSelect';
-import FormActions from './FormActions';
-import StatusMessage from './StatusMessage';
+import { useFileManager } from '../hooks/useFileManager.js';
+import PreviewModal from './PreviewModal.jsx';
+import FileDropzone from './FileDropzone.jsx';
+import FilePreview from './FilePreview.jsx';
+import MonitorSelect from './MonitorSelect.jsx';
+import FormActions from './FormActions.jsx';
+import StatusMessage from './StatusMessage.jsx';
 
 export default function ContentForm({ addItemToPlaylist, loading }) {
   const [tipo, setTipo] = useState('imagem');

@@ -12,7 +12,7 @@ export default defineConfig({
   ],
 
   build:{
-    outDir: '../admin',
+    outDir: '.../admin',
     emptyOutDir: false,
     rollupOptions: {
       output:{

@@ -1,10 +1,10 @@
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Breadcrumb from '../components/Breadcrumb';
-import MonitorsStatus from '../components/MonitorsStatus';
-import ContentForm from '../components/ContentForm';
-import SaveActions from '../components/SaveActions';
-import { usePlaylistManager } from '../hooks/usePlaylistManager';
+import Header from '../components/Header.jsx';
+import Footer from '../components/Footer.jsx';
+import Breadcrumb from '../components/Breadcrumb.jsx';
+import MonitorsStatus from '../components/MonitorsStatus.jsx';
+import ContentForm from '../components/ContentForm.jsx';
+import SaveActions from '../components/SaveActions.jsx';
+import { usePlaylistManager } from '../hooks/usePlaylistManager.js';
 
 export default function Dashboard() {
   const playlistManager = usePlaylistManager();

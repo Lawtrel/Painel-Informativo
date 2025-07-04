@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MONITORES } from '../constants/monitors';
+import { createPlaylistItem, cleanPlaylistForSave } from '../model/playlistModel';
 
 export function usePlaylistManager() {
   const [playlist, setPlaylist] = useState({ monitores: [] });
@@ -24,37 +25,6 @@ export function usePlaylistManager() {
       });
   }, []);
 
-  function createPlaylistItem({
-    arquivo,
-    tipo,
-    duracao_s,
-    monitorId,
-    file = undefined,
-    isNew = true,
-    status = 'pendente',
-    data_criacao = new Date().toISOString(),
-    preview_url = null,
-    file_size = undefined,
-    file_type = undefined,
-    mensagem = undefined
-  }) {
-    return {
-      id: Date.now() + Math.random(),
-      arquivo,
-      tipo,
-      duracao_s,
-      monitorId: parseInt(monitorId),
-      file,
-      isNew,
-      status, // 'pendente', 'enviado', 'erro'
-      data_criacao,
-      preview_url,
-      file_size,
-      file_type,
-      mensagem
-    };
-  }
-
   // Adicionar item à playlist (apenas local, sem upload)
   async function addItemToPlaylist(itemData) {
     if (itemData.monitorId === undefined || itemData.monitorId === null) {
@@ -76,18 +46,11 @@ export function usePlaylistManager() {
         previewUrl = URL.createObjectURL(itemData.file);
       }
       const newItem = createPlaylistItem({
-        arquivo: itemData.arquivo,
-        tipo: itemData.tipo,
-        duracao_s: itemData.duracao_s,
-        monitorId: itemData.monitorId,
-        file: itemData.file,
+        ...itemData,
+        preview_url: previewUrl,
+        data_criacao: new Date().toISOString(),
         isNew: true,
         status: 'pendente',
-        data_criacao: new Date().toISOString(),
-        preview_url: previewUrl,
-        file_size: itemData.file_size,
-        file_type: itemData.file_type,
-        mensagem: itemData.mensagem
       });
       setPlaylist(prev => {
         const existingMonitor = prev.monitores.find(m => m.id_monitor === monitorId);
@@ -187,18 +150,39 @@ export function usePlaylistManager() {
         return { ...monitor, itens: updatedItens };
       }));
       setPlaylist(prev => ({ ...prev, monitores: updatedMonitores, ultima_atualizacao: new Date().toISOString() }));
-      setStatus({ message: 'Alterações salvas com sucesso! Os monitores serão atualizados em breve.', type: 'success' });
+
+      const config_geral = {
+        url_base_midia_http: "http://localhost/Painel-Informativo/conteudo_simulado_ftp/"
+      };
+      const versao = 0.1;
+      const playlistToSave = {
+        versao,
+        ultima_atualizacao: new Date().toISOString(),
+        config_geral,
+        monitores: cleanPlaylistForSave(updatedMonitores)
+      };
+
+      try {
+        const response = await fetch('/Painel-Informativo/admin/manage_playlist.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(playlistToSave)
+        });
+        const result = await response.json();
+        if (!result.success) {
+          setStatus({ message: `Erro ao salvar playlist: ${result.message || 'Erro desconhecido.'}`, type: 'error' });
+          return;
+        }
+        setStatus({ message: result.message || 'Playlist salva com sucesso!', type: 'success' });
+      } catch (error) {
+        setStatus({ message: `Erro na requisição ao salvar playlist: ${error.message}`, type: 'error' });
+        return;
+      }
     } catch (error) {
       setStatus({ message: `Erro ao salvar: ${error.message}`, type: 'error' });
     } finally {
       setLoading(false);
     }
-  }
-
-  // Calcular duração total do monitor
-  function calculateMonitorDuration(monitor) {
-    const totalSeconds = monitor.itens.reduce((sum, item) => sum + item.duracao_s, 0);
-    return Math.round(totalSeconds / 60);
   }
 
   // Ordenar monitores por ID
@@ -213,7 +197,6 @@ export function usePlaylistManager() {
     addItemToPlaylist,
     removeItem,
     savePlaylist,
-    calculateMonitorDuration,
     getSortedMonitors,
     setStatus
   };
