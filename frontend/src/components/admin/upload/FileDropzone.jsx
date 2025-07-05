@@ -41,6 +41,10 @@ export default function FileDropzone({ tipo, onFileChange, onFileDrop, onDragOve
           <p className="text-gray-400 text-xs mt-1">
             Otimizado para painéis Full HD verticais (1080x1920)
           </p>
+          <p className="text-orange-500 text-xs mt-1 font-medium">
+            <i className="fas fa-exclamation-triangle mr-1"></i>
+            Tamanho máximo: 2MB
+          </p>
         </div>
       </div>
     </div>
