@@ -24,7 +24,7 @@ export default function FilePreview({ selectedFile, imagePreviewUrl, tipo, fileR
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
                   <button 
                     type="button" 
-                    className="text-white hover:text-red-300 transition-colors"
+                    className="text-white cursor-pointer hover:text-red-300 transition-colors"
                     onClick={onRemoveFile}
                   >
                     <i className="fas fa-trash text-xl"></i>
@@ -73,7 +73,7 @@ export default function FilePreview({ selectedFile, imagePreviewUrl, tipo, fileR
             <div className="mt-4 flex gap-2">
               <button 
                 type="button" 
-                className="text-red-500 hover:text-red-700 transition-colors text-sm font-medium flex items-center gap-1"
+                className="text-red-500 cursor-pointer hover:text-red-700 transition-colors text-sm font-medium flex items-center gap-1"
                 onClick={onRemoveFile}
               >
                 <i className="fas fa-times"></i>
