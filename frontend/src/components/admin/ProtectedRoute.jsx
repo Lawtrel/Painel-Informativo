@@ -1,9 +1,8 @@
 import { Navigate } from 'react-router-dom';
-import SessionExpiredModal from './modals/SessionExpiredModal.jsx';
 import { useAuth } from '../../hooks/useAuth.js';
 
 function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading, showExpiredModal } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return (
@@ -20,12 +19,7 @@ function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  return (
-    <>
-      {children}
-      {showExpiredModal && <SessionExpiredModal />}
-    </>
-  );
+  return <>{children}</>;
 }
 
 export default ProtectedRoute; 

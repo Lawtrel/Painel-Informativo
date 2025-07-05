@@ -7,7 +7,6 @@ export function useAuth() {
   const [user, setUser] = useState(User.createGuest());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [showExpiredModal, setShowExpiredModal] = useState(false);
   const navigate = useNavigate();
 
   const login = async (username, password) => {
@@ -52,34 +51,62 @@ export function useAuth() {
       
       if (result.success) {
         setUser(result.user);
-        setShowExpiredModal(false);
+        return result;
       } else if (result.expired) {
         setUser(User.createGuest());
-        setShowExpiredModal(true);
+        navigate('/login', { 
+          state: { message: 'Sua sessão expirou por inatividade. Por favor, faça login novamente.' }
+        });
+        return result;
       } else {
         setUser(User.createGuest());
         navigate('/login');
+        return result;
       }
     } catch (error) {
       console.error('Erro ao verificar autenticação:', error);
       setUser(User.createGuest());
       navigate('/login');
+      return null;
     } finally {
       setLoading(false);
     }
   }, [navigate]);
 
   const handleSessionExpire = () => {
-    setShowExpiredModal(true);
+    setUser(User.createGuest());
+    navigate('/login', { 
+      state: { message: 'Sua sessão expirou por inatividade. Por favor, faça login novamente.' }
+    });
   };
 
   useEffect(() => {
-    checkAuth();
-    
-    // Verificar autenticação a cada 30 segundos
-    const interval = setInterval(checkAuth, 30000);
-    
-    return () => clearInterval(interval);
+    let timeoutId;
+
+    const checkAndSchedule = async () => {
+      const result = await checkAuth();
+
+      if (result?.remaining_time) {
+        const buffer = 15 * 1000;
+        const delay = result.remaining_time * 1000 - buffer;
+        timeoutId = setTimeout(checkAndSchedule, Math.max(delay, 5000));
+      } else {
+        timeoutId = setTimeout(checkAndSchedule, 30000);
+      }
+    };
+
+    checkAndSchedule();
+
+    return () => clearTimeout(timeoutId);
+  }, [checkAuth]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') checkAuth();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [checkAuth]);
 
   return {
@@ -88,7 +115,6 @@ export function useAuth() {
     remainingTime: user.getRemainingTime(),
     loading,
     error,
-    showExpiredModal,
     login,
     logout,
     checkAuth,

@@ -1,4 +1,5 @@
 import { useAuth } from '../../hooks/useAuth.js';
+import { useLocation } from 'react-router-dom';
 import LoginForm from './LoginForm.jsx';
 import LoginHeader from './LoginHeader.jsx';
 import LoginFooter from './LoginFooter.jsx';
@@ -6,6 +7,8 @@ import LoginBackground from './LoginBackground.jsx';
 
 function Login() {
   const { login, loading, error } = useAuth();
+  const location = useLocation();
+  const sessionExpiredMessage = location.state?.message;
 
   const handleSubmit = async (username, password) => {
     await login(username, password);
@@ -18,6 +21,15 @@ function Login() {
       <div className="relative z-10 max-w-md w-full">
         <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
           <LoginHeader />
+          
+          {sessionExpiredMessage && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-2 text-red-700">
+                <i className="fas fa-exclamation-triangle"></i>
+                <span className="text-sm font-medium">{sessionExpiredMessage}</span>
+              </div>
+            </div>
+          )}
           
           <LoginForm 
             loading={loading}
