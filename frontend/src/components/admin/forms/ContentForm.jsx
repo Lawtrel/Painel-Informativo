@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useFileManager } from '../../../hooks/useFileManager.js';
 import PreviewModal from '../modals/PreviewModal.jsx';
 import FileDropzone from '../upload/FileDropzone.jsx';
@@ -98,7 +98,7 @@ export default function ContentForm({ addItemToPlaylist, loading, onReset }) {
   }
 
   // Função para resetar o formulário
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setTipo('imagem');
     setDuracao(10);
     setMonitor('0');
@@ -106,14 +106,14 @@ export default function ContentForm({ addItemToPlaylist, loading, onReset }) {
     setImagePreviewUrl(null);
     setIsDragOver(false);
     removeSelectedFile();
-  };
+  }, [removeSelectedFile]);
 
   // Usar useEffect para resetar o formulário quando onReset mudar
   useEffect(() => {
     if (onReset > 0) {
       resetForm();
     }
-  }, [onReset]);
+  }, [onReset, resetForm]);
 
   async function handleSubmit(e) {
     e.preventDefault();
