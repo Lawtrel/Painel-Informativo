@@ -1,8 +1,10 @@
 <?php
-// api/process_login.php
+// api/handle_login.php
 require_once __DIR__ . '/../includes/config.php'; // Inclui as credenciais
 
 session_start();
+
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input_username = $_POST['username'] ?? '';
@@ -11,17 +13,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verifica as credenciais
     if ($input_username === ADMIN_USERNAME && $input_password === ADMIN_PASSWORD) {
         $_SESSION['logged_in'] = true; // Define a variável de sessão
-        header('Location: /Painel-Informativo/admin/index.php'); // Redireciona para a página principal do painel
-        exit();
+        $_SESSION['login_time'] = time(); // Armazena o timestamp do login
+        http_response_code(200);
+        echo json_encode(['success' => true, 'message' => 'Login realizado com sucesso']);
     } else {
-        // Credenciais incorretas, redireciona de volta para a página de login com erro
-        header('Location: /Painel-Informativo/admin/login.php?error=' . urlencode('Usuário ou senha incorretos.'));
-        exit();
+        // Credenciais incorretas
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => 'Usuário ou senha incorretos']);
     }
 } else {
-    // Se não for uma requisição POST, redireciona para a página de login
-    header('Location: /Painel-Informativo/admin/login.php');
-    exit();
+    // Se não for uma requisição POST
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Método não permitido']);
 }
-
 ?>

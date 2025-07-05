@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import PreviewModal from './PreviewModal';
+import PreviewModal from '../modals/PreviewModal';
 
 export default function MonitorsStatus({ monitores, loading }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -7,11 +7,11 @@ export default function MonitorsStatus({ monitores, loading }) {
 
   // Função para obter a URL da imagem/vídeo
   function getMediaUrl(item) {
+    if (item.url_http) {
+      return item.url_http; // URL HTTP da API (itens já salvos)
+    }
     if (item.preview_url) {
       return item.preview_url; // Preview local para itens pendentes
-    }
-    if (item.url_http) {
-      return item.url_http;
     }
     if (item.arquivo) {
       const baseUrl = window.location.origin + '/Painel-Informativo/conteudo_simulado_ftp/';
@@ -68,13 +68,63 @@ export default function MonitorsStatus({ monitores, loading }) {
     );
   }
 
+  // Função para obter status visual do item
+  function getStatusBadge(item) {
+    if (!item.status) return null;
+    
+    const statusConfig = {
+      'pendente': { 
+        bg: 'bg-yellow-100', 
+        text: 'text-yellow-800', 
+        label: 'Pendente',
+        icon: 'fa-clock'
+      },
+      'enviado': { 
+        bg: 'bg-green-100', 
+        text: 'text-green-800', 
+        label: 'Enviado',
+        icon: 'fa-check'
+      },
+      'erro': { 
+        bg: 'bg-red-100', 
+        text: 'text-red-800', 
+        label: 'Erro',
+        icon: 'fa-exclamation-triangle'
+      }
+    };
+
+    const config = statusConfig[item.status];
+    if (!config) return null;
+
+    return (
+      <span className={`inline-block text-xs font-bold rounded px-2 py-0.5 mb-1 w-fit ml-1 ${config.bg} ${config.text}`}>
+        <i className={`fas ${config.icon} mr-1`}></i>
+        {config.label}
+      </span>
+    );
+  }
+
   if (loading) {
-    return <div>Carregando...</div>;
+    return (
+      <section className="mb-8">
+        <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#003366]">
+          <i className="fas fa-tv"></i> Status dos Monitores
+        </h2>
+        <div className="bg-white rounded-lg shadow-md p-6 flex items-center justify-center min-h-[180px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Carregando monitores...</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#003366]"><i className="fas fa-tv"></i> Status dos Monitores</h2>
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#003366]">
+        <i className="fas fa-tv"></i> Status dos Monitores
+      </h2>
       {monitores.length === 0 ? (
         <div className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center min-h-[180px]">
           <i className="fas fa-tv text-4xl text-gray-300 mb-2"></i>
@@ -88,9 +138,12 @@ export default function MonitorsStatus({ monitores, loading }) {
               {/* Header */}
               <div className="w-full bg-[#003366] text-white px-6 py-3 rounded-t-2xl shadow-sm flex items-center justify-between">
                 <span className="font-bold text-xl">Monitor {monitor.id_monitor + 1}</span>
+                <span className="text-sm opacity-80">
+                  {monitor.itens?.length || 0} item{(monitor.itens?.length || 0) !== 1 ? 's' : ''}
+                </span>
               </div>
               <div className="flex flex-col w-full p-6">
-                {monitor.itens.length === 0 ? (
+                {!monitor.itens || monitor.itens.length === 0 ? (
                   <div className="text-gray-400 text-center">Nenhum conteúdo</div>
                 ) : (
                   monitor.itens.map((item, idx) => (
@@ -99,7 +152,9 @@ export default function MonitorsStatus({ monitores, loading }) {
                         {getPreview(item)}
                         <div className="flex flex-col flex-1 min-w-0 justify-center">
                           {/* type content text*/}
-                          <span className="text-base font-semibold text-[#003366] mb-1 capitalize truncate">{item.tipo.replace('_', ' ')}</span>
+                          <span className="text-base font-semibold text-[#003366] mb-1 capitalize truncate">
+                            {item.tipo.replace('_', ' ')}
+                          </span>
                           {/* name arquive */}
                           {item.arquivo && (
                             <span className="flex items-center gap-1 text-xs text-gray-700 mb-1 truncate">
@@ -118,17 +173,7 @@ export default function MonitorsStatus({ monitores, loading }) {
                             <span className="text-xs text-gray-500 truncate max-w-[140px]">{item.mensagem}</span>
                           )}
                           {/* status do upload */}
-                          {item.status && (
-                            <span className={`inline-block text-xs font-bold rounded px-2 py-0.5 mb-1 w-fit ml-1
-                              ${item.status === 'pendente' ? 'bg-yellow-100 text-yellow-800' : ''}
-                              ${item.status === 'enviado' ? 'bg-green-100 text-green-800' : ''}
-                              ${item.status === 'erro' ? 'bg-red-100 text-red-800' : ''}
-                            `}>
-                              {item.status === 'pendente' && 'Pendente'}
-                              {item.status === 'enviado' && 'Enviado'}
-                              {item.status === 'erro' && 'Erro'}
-                            </span>
-                          )}
+                          {getStatusBadge(item)}
                         </div>
                       </div>
                       {/* separetor */}

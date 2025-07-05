@@ -1,7 +1,11 @@
-export default function SaveActions({ savePlaylist, loading, status }) {
+export default function SaveActions({ savePlaylist, loading, status, hasPendingItems, resetForm }) {
 
   async function handleSave() {
     await savePlaylist();
+  }
+
+  function handleReset() {
+    resetForm();
   }
 
   return (
@@ -15,14 +19,23 @@ export default function SaveActions({ savePlaylist, loading, status }) {
           <i className="fas fa-info-circle text-xl"></i>
           <div>
             <h4 className="font-bold">Importante</h4>
-            <p className="text-gray-600">As alterações só serão aplicadas aos monitores após salvar. Certifique-se de revisar todo o conteúdo antes de salvar.</p>
+            <p className="text-gray-600">
+              {hasPendingItems 
+                ? "Você tem conteúdo pendente para enviar. Clique em 'Salvar Alterações' para enviar os arquivos e aplicar as mudanças aos monitores."
+                : "As alterações só serão aplicadas aos monitores após salvar. Certifique-se de revisar todo o conteúdo antes de salvar."
+              }
+            </p>
           </div>
         </div>
         <div className="flex gap-2">
           <button 
             onClick={handleSave}
-            disabled={loading}
-            className="flex items-center gap-2 bg-[#003366] text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-[#00509E] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || !hasPendingItems}
+            className={`flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg font-semibold shadow transition-colors ${
+              hasPendingItems 
+                ? 'bg-[#003366] text-white hover:bg-[#00509E] disabled:opacity-50 disabled:cursor-not-allowed'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
           >
             {loading ? (
               <>
@@ -32,11 +45,17 @@ export default function SaveActions({ savePlaylist, loading, status }) {
             ) : (
               <>
                 <i className="fas fa-save"></i>
-                Salvar Alterações
+                {hasPendingItems ? 'Salvar Alterações' : 'Nada para Salvar'}
               </>
             )}
           </button>
-          <button className="flex items-center gap-2 border border-[#003366] text-[#003366] px-4 py-2 rounded-lg font-semibold hover:bg-[#003366]/10 transition-colors"><i className="fas fa-undo"></i> Resetar Formulário</button>
+          <button 
+            onClick={handleReset}
+            className="flex cursor-pointer items-center gap-2 border border-[#003366] text-[#003366] px-4 py-2 rounded-lg font-semibold hover:bg-[#003366]/10 transition-colors"
+          >
+            <i className="fas fa-undo"></i> 
+            Resetar Formulário
+          </button>
         </div>
       </div>
       {status.message && (

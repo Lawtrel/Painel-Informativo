@@ -1,5 +1,5 @@
 import React from 'react';
-import { VALID_IMAGE_TYPES, VALID_VIDEO_TYPES } from '../hooks/useFileManager.js';
+import { VALID_IMAGE_TYPES, VALID_VIDEO_TYPES } from '../../../hooks/useFileManager';
 
 export default function FileDropzone({ tipo, onFileChange, onFileDrop, onDragOver, onDragLeave, onClick, isDragOver }) {
   const acceptTypes = tipo === 'imagem' ? VALID_IMAGE_TYPES.join(',') : VALID_VIDEO_TYPES.join(',');
