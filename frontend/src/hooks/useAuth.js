@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService.js';
 import { User } from '../model/userModel.js';
 
@@ -8,6 +8,7 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   const login = async (username, password) => {
     setLoading(true);
@@ -86,28 +87,35 @@ export function useAuth() {
     const checkAndSchedule = async () => {
       const result = await checkAuth();
 
-      if (result?.remaining_time) {
-        const buffer = 15 * 1000;
-        const delay = result.remaining_time * 1000 - buffer;
-        timeoutId = setTimeout(checkAndSchedule, Math.max(delay, 5000));
-      } else {
-        timeoutId = setTimeout(checkAndSchedule, 30000);
+      const isPublic = ['/login'].includes(location.pathname);
+
+      if (!isPublic) {
+        if (result?.remaining_time) {
+          const buffer = 15 * 1000;
+          const delay = result.remaining_time * 1000 - buffer;
+          timeoutId = setTimeout(checkAndSchedule, Math.max(delay, 5000));
+        } else {
+          timeoutId = setTimeout(checkAndSchedule, 30000);
+        }
       }
     };
 
     checkAndSchedule();
 
     return () => clearTimeout(timeoutId);
-  }, [checkAuth]);
+  }, [checkAuth, location.pathname]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') checkAuth();
+      const isPublic = ['/login'].includes(location.pathname);
+      if (document.visibilityState === 'visible' && !isPublic) {
+        checkAuth();
+      }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [checkAuth]);
+  }, [checkAuth, location.pathname]);
 
   return {
     user,
