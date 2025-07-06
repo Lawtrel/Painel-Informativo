@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export const MAX_SIZE = 50 * 1024 * 1024; // 50MB
+export const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 export const VALID_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 export const VALID_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 
@@ -44,13 +44,13 @@ export function useFileManager() {
 
     // Verificar resolução
     if (width >= fullHD.width && height >= fullHD.height) {
-      message = '✅ Resolução Full HD Vertical (1080x1920) ou superior - Perfeita!';
+      message = 'Resolução Full HD Vertical (1080x1920) ou superior - Perfeita!';
       type = 'success';
     } else if (width >= hd.width && height >= hd.height) {
-      message = message || '✅ Resolução HD Vertical (720x1280) ou superior - Boa qualidade!';
+      message = message || 'Resolução HD Vertical (720x1280) ou superior - Boa qualidade!';
       type = type === 'warning' ? 'warning' : 'success';
     } else {
-      message = '❌ Resolução muito baixa. Recomendado: mínimo 720x1280px para boa qualidade.';
+      message = 'Resolução muito baixa. Recomendado: mínimo 720x1280px para boa qualidade.';
       type = 'error';
     }
 
@@ -69,12 +69,21 @@ export function useFileManager() {
       setStatus({ message: `Tipo de arquivo inválido para ${tipo}`, type: 'error' });
       return false;
     }
+    
+    // Verificar tamanho do arquivo
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    const maxSizeMB = (MAX_SIZE / (1024 * 1024)).toFixed(0);
+    
     if (file.size > MAX_SIZE) {
-      setStatus({ message: 'Arquivo muito grande. Tamanho máximo: 50MB', type: 'error' });
+      setStatus({ 
+        message: `Arquivo muito grande! Tamanho: ${fileSizeMB}MB. Máximo permitido: ${maxSizeMB}MB.`, 
+        type: 'error' 
+      });
       return false;
     }
+    
     setSelectedFile(file);
-    setStatus({ message: `Arquivo "${file.name}" selecionado com sucesso!`, type: 'success' });
+    setStatus({ message: `Arquivo "${file.name}" selecionado com sucesso! (${fileSizeMB}MB)`, type: 'success' });
     if (tipo === 'imagem' && file.type.startsWith('image/')) {
       checkImageResolution(file);
     } else {

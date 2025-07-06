@@ -139,7 +139,7 @@ export default function PreviewModal({ isOpen, onClose, item }) {
             <ul className="text-sm text-blue-700 space-y-1">
               <li>• Resolução ideal: 1080x1920px (Full HD Vertical)</li>
               <li>• Proporção: 9:16 (vertical)</li>
-              <li>• Tamanho máximo: 50MB</li>
+                              <li>• Tamanho máximo: 2MB</li>
               <li>• Formatos: JPG, PNG, MP4</li>
             </ul>
           </div>

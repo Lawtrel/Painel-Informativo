@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { useFileManager } from '../hooks/useFileManager.js';
-import PreviewModal from './PreviewModal.jsx';
-import FileDropzone from './FileDropzone.jsx';
-import FilePreview from './FilePreview.jsx';
-import MonitorSelect from './MonitorSelect.jsx';
+import { useState, useEffect, useCallback } from 'react';
+import { useFileManager } from '../../../hooks/useFileManager.js';
+import PreviewModal from '../modals/PreviewModal.jsx';
+import FileDropzone from '../upload/FileDropzone.jsx';
+import FilePreview from '../upload/FilePreview.jsx';
+import MonitorSelect from '../MonitorSelect.jsx';
 import FormActions from './FormActions.jsx';
-import StatusMessage from './StatusMessage.jsx';
+import StatusMessage from '../status/StatusMessage.jsx';
 
-export default function ContentForm({ addItemToPlaylist, loading }) {
+export default function ContentForm({ addItemToPlaylist, loading, onReset }) {
   const [tipo, setTipo] = useState('imagem');
   const [duracao, setDuracao] = useState(10);
   const [monitor, setMonitor] = useState('0');
@@ -97,6 +97,24 @@ export default function ContentForm({ addItemToPlaylist, loading }) {
     }
   }
 
+  // Função para resetar o formulário
+  const resetForm = useCallback(() => {
+    setTipo('imagem');
+    setDuracao(10);
+    setMonitor('0');
+    setPreviewItem(null);
+    setImagePreviewUrl(null);
+    setIsDragOver(false);
+    removeSelectedFile();
+  }, [removeSelectedFile]);
+
+  // Usar useEffect para resetar o formulário quando onReset mudar
+  useEffect(() => {
+    if (onReset > 0) {
+      resetForm();
+    }
+  }, [onReset, resetForm]);
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!selectedFile) {
@@ -150,7 +168,7 @@ export default function ContentForm({ addItemToPlaylist, loading }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold mb-1 text-[#003366]"><i className="fas fa-file-alt"></i> Tipo de Conteúdo</label>
-              <select className="w-full border border-gray-300 rounded-lg px-2 py-1 focus:border-[#003366] focus:ring-[#003366]" value={tipo} onChange={handleTipoChange}>
+              <select className="w-full cursor-pointer border border-gray-300 rounded-lg px-2 py-1 focus:border-[#003366] focus:ring-[#003366]" value={tipo} onChange={handleTipoChange}>
                 <option value="imagem">Imagem (JPG, PNG, GIF)</option>
                 <option value="video">Vídeo (MP4, WEBM, MOV)</option>
               </select>
