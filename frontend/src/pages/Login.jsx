@@ -1,9 +1,9 @@
-import { useAuthContext } from '../../hooks/useAuthContext.js';
+import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useLocation } from 'react-router-dom';
-import LoginForm from './LoginForm.jsx';
-import LoginHeader from './LoginHeader.jsx';
-import LoginFooter from './LoginFooter.jsx';
-import LoginBackground from './LoginBackground.jsx';
+import LoginForm from '../components/login/LoginForm.jsx';
+import LoginHeader from '../components/login/LoginHeader.jsx';
+import LoginFooter from '../components/login/LoginFooter.jsx';
+import LoginBackground from '../components/login/LoginBackground.jsx';
 
 function Login() {
   const { login, loading, error } = useAuthContext();
