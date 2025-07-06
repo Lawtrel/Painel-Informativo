@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService.js';
 import { User } from '../model/userModel.js';
@@ -7,6 +7,7 @@ export function useAuth() {
   const [user, setUser] = useState(User.createGuest());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const isCheckingRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -74,6 +75,18 @@ export function useAuth() {
     }
   }, [navigate]);
 
+  const debounceTimeoutRef = useRef(null);
+  
+  const debouncedCheck = useCallback(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    debounceTimeoutRef.current = setTimeout(() => {
+      checkAuth();
+      debounceTimeoutRef.current = null;
+    }, 1000);
+  }, [checkAuth]);
+
   const handleSessionExpire = () => {
     setUser(User.createGuest());
     navigate('/login', { 
@@ -85,12 +98,15 @@ export function useAuth() {
     let timeoutId;
 
     const checkAndSchedule = async () => {
+      if (isCheckingRef.current) return;
+      isCheckingRef.current = true;
+      
       const result = await checkAuth();
 
       const isPublic = ['/login'].includes(location.pathname);
 
       if (!isPublic) {
-        if (result?.remaining_time) {
+        if (result?.remaining_time && result.remaining_time > 0) {
           const buffer = 15 * 1000;
           const delay = result.remaining_time * 1000 - buffer;
           timeoutId = setTimeout(checkAndSchedule, Math.max(delay, 5000));
@@ -98,6 +114,8 @@ export function useAuth() {
           timeoutId = setTimeout(checkAndSchedule, 30000);
         }
       }
+      
+      isCheckingRef.current = false;
     };
 
     checkAndSchedule();
@@ -106,16 +124,23 @@ export function useAuth() {
   }, [checkAuth, location.pathname]);
 
   useEffect(() => {
+    const isPublic = ['/login'].includes(location.pathname);
+    
     const handleVisibilityChange = () => {
-      const isPublic = ['/login'].includes(location.pathname);
       if (document.visibilityState === 'visible' && !isPublic) {
-        checkAuth();
+        debouncedCheck();
       }
     };
-
+    
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [checkAuth, location.pathname]);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [debouncedCheck, location.pathname]);
 
   return {
     user,
@@ -126,6 +151,7 @@ export function useAuth() {
     login,
     logout,
     checkAuth,
+    debouncedCheck,
     handleSessionExpire
   };
 } 

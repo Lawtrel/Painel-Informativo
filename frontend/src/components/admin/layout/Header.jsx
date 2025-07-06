@@ -1,9 +1,9 @@
 import SessionTimer from '../status/SessionTimer.jsx';
-import { useAuth } from '../../../hooks/useAuth.js';
+import { useAuthContext } from '../../../hooks/useAuthContext.js';
 import logo from '../../../assets/uneb-seeklogo.png'
 
 export default function Header() {
-  const { remainingTime, logout, handleSessionExpire } = useAuth();
+  const { remainingTime, logout, handleSessionExpire } = useAuthContext();
   
   return (
     <header className="bg-[#003366] text-white py-5 shadow-md">

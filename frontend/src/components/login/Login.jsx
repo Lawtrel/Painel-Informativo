@@ -1,4 +1,4 @@
-import { useAuth } from '../../hooks/useAuth.js';
+import { useAuthContext } from '../../hooks/useAuthContext.js';
 import { useLocation } from 'react-router-dom';
 import LoginForm from './LoginForm.jsx';
 import LoginHeader from './LoginHeader.jsx';
@@ -6,7 +6,7 @@ import LoginFooter from './LoginFooter.jsx';
 import LoginBackground from './LoginBackground.jsx';
 
 function Login() {
-  const { login, loading, error } = useAuth();
+  const { login, loading, error } = useAuthContext();
   const location = useLocation();
   const sessionExpiredMessage = location.state?.message;
 

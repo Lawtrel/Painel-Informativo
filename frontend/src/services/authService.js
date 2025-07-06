@@ -45,7 +45,12 @@ class AuthService {
       
       if (response.ok && data.authenticated) {
         const user = User.fromAuthResponse(data);
-        return { success: true, user, message: null };
+        return { 
+          success: true, 
+          user, 
+          message: null,
+          remaining_time: data.remaining_time 
+        };
       } else if (data.expired) {
         return { 
           success: false, 
