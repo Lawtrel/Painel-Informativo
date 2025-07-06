@@ -5,14 +5,13 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   base: './',
-  root: 'src',
   plugins: [
-      react(),
+    react(),
     tailwindcss(),
   ],
 
   build:{
-    outDir: '../../admin',
+    outDir: '../admin',
     emptyOutDir: false,
     rollupOptions: {
       output:{
@@ -20,7 +19,10 @@ export default defineConfig({
         chunkFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       }
-    }
+    },
+    cssCodeSplit: false,
+    minify: 'esbuild',
+    copyPublicDir: true,
   },
 
   server: {
@@ -38,5 +40,13 @@ export default defineConfig({
         secure: false
       }
     }
-  }
+  },
+
+  css: {
+    devSourcemap: false,
+  },
+
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
 })
