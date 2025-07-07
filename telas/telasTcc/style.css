@@ -48,7 +48,8 @@ body {
     overflow: hidden;
     border-radius: 25px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding-bottom: 100%; /* Para manter uma proporção 16:9, ajuste conforme a proporção das suas imagens */
+    /* Adiciona padding-bottom para manter a proporção da imagem quando a largura for restrita */
+    padding-bottom: 150%; /* Para manter uma proporção 16:9, ajuste conforme a proporção das suas imagens */
     height: 0; /* Necessário com padding-bottom para a proporção */
 }
 
@@ -101,7 +102,7 @@ body {
 }
 
 .footer-info-strip { /* Estilos para a faixa de informação do rodapé */
-    color: black;
+    color: black; /* Cor do texto */
     padding: 10px 20px; /* Padding interno para o texto */
     width: 100%;
     box-sizing: border-box;
