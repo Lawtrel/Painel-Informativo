@@ -1,3 +1,4 @@
+/* Define o layout principal da página */
 body {
     min-height: 100vh;
     display: flex;
@@ -5,9 +6,10 @@ body {
     margin: 0;
 }
 
+/* Estilo do cabeçalho */
 .titulo {
-    background-color: #2c3e50;
-    color: #fff;
+    background-color: #2c3e50; /* Cor de fundo escura */
+    color: #fff; /* Texto branco */
     padding: 40px 0 0 0;
     text-align: center;
     position: relative;
@@ -15,15 +17,17 @@ body {
     border-bottom: none;
 }
 
+/* Título principal */
 .texto_titulo.principal {
     font-family: 'Arial Black', Arial, sans-serif;
-    font-size: clamp(2.5em, 7vw, 5em);
+    font-size: clamp(2.5em, 7vw, 5em); /* Responsivo */
     font-weight: bold;
     text-transform: uppercase;
     margin: 0;
     letter-spacing: 2px;
 }
 
+/* Subtítulo */
 .texto_titulo.subtitulo {
     font-family: Arial, sans-serif;
     font-size: clamp(1.5em, 4vw, 2.5em);
@@ -32,6 +36,7 @@ body {
     letter-spacing: 1px;
 }
 
+/* Onda decorativa do cabeçalho */
 .header-wave {
     position: relative;
     width: 100%;
@@ -47,25 +52,26 @@ body {
     height: 80px;
 }
 
+/* Área principal do conteúdo */
 main.conteudo {
     flex: 1 0 auto;
     padding: 25px;
-    width: 95%; /* Usar porcentagem para ser mais flexível */
-    max-width: 1200px; /* Um max-width para telas muito largas */
-    margin: 0 auto; /* Centraliza horizontalmente */
+    width: 95%;
+    max-width: 1200px;
+    margin: 0 auto;
     background-color: white;
     border-radius: 25px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    flex-grow: 1; /* Permite que o conteúdo principal ocupe o espaço disponível */
-    display: flex; /* Adiciona Flexbox para centralizar o carrossel */
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente (se houver espaço extra) */
-    box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura/altura */
-    margin-bottom: 0; /* Remove margens extras */
-    min-height: 400px; /* Garante altura mínima para centralização */
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    margin-bottom: 0;
+    min-height: 400px;
 }
 
-/* Corrigir nome da classe para carousel-container */
+/* Container do carrossel */
 .carousel-container {
     position: relative;
     width: 100%;
@@ -81,6 +87,7 @@ main.conteudo {
     background: transparent;
 }
 
+/* Item do carrossel (imagem, vídeo ou texto) */
 .carousel-item {
     display: flex;
     justify-content: center;
@@ -91,16 +98,20 @@ main.conteudo {
     text-align: center;
 }
 
-.carousel-item img {
+/* Imagem/Vídeo do carrossel (rotacionada para exibição vertical) */
+.carousel-item img,
+.carousel-item video {
     max-width: 100%;
-    max-height: 350px;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
     margin: 0 auto;
     display: block;
     border-bottom: none;
 }
 
-/* Estilos para o novo layout do rodapé */
+/* Rodapé da página */
 .footer {
     background-color: #fff;
     padding-top: 20px;
@@ -116,6 +127,7 @@ main.conteudo {
     overflow: hidden;
 }
 
+/* Onda decorativa do rodapé */
 .footer-wave {
     position: absolute;
     left: 0;
@@ -133,7 +145,8 @@ main.conteudo {
     height: 60px;
 }
 
-.logos-container { /* Estilos para o container das logos */
+/* Container das logos e do QR Code no rodapé */
+.logos-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -145,6 +158,7 @@ main.conteudo {
     position: relative;
 }
 
+/* Logo da biologia (não usada neste HTML, mas pode ser usada em outros contextos) */
 .biologia-logo {
     max-width: 180px;
     height: auto;
@@ -153,6 +167,7 @@ main.conteudo {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
+/* Logo do brasão da UNEB */
 .brasao {
     max-width: 120px;
     height: auto;
@@ -160,6 +175,7 @@ main.conteudo {
     border-radius: 10px;
 }
 
+/* Estilo do QR Code */
 .qrCode {
     max-width: 100px;
     height: auto;
@@ -169,7 +185,8 @@ main.conteudo {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.footer-info-strip { /* Estilos para a faixa de informação do rodapé */
+/* Faixa de informação no rodapé */
+.footer-info-strip {
     color: #222;
     padding: 10px 20px 0 20px;
     width: 100%;
@@ -181,8 +198,7 @@ main.conteudo {
     position: relative;
 }
 
-
-/* Media query para telas muito estreitas, ajusta o título */
+/* Responsividade para telas pequenas */
 @media (max-width: 600px) {
     .texto_titulo {
         font-size: 1.8em;

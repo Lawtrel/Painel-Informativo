@@ -4,39 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MostraTcc</title>
+    <!-- Importa o arquivo de estilos CSS -->
     <link rel="stylesheet" href="style.css">
+    <!-- Importa a biblioteca para gerar QR Codes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
+    <!-- Cabeçalho com título e subtítulo -->
     <header class="titulo">
         <div class="texto_titulo principal">Mostra Tcc</div>
         <div class="texto_titulo subtitulo">DCET - Campus Alagoinhas</div>
+        <!-- Onda decorativa no final do cabeçalho -->
         <div class="header-wave">
             <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                 <path d="M0,40 Q360,80 720,40 Q1080,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
             </svg>
         </div>
     </header>
+    <!-- Conteúdo principal: onde o carrossel será exibido -->
     <main class="conteudo">
         <div id="carousel-container">
+            <!-- Os itens do carrossel são inseridos dinamicamente pelo JS -->
         </div>
     </main>
-     <footer class="footer">
+    <!-- Rodapé com logos, QR Code e faixa de informação -->
+    <footer class="footer">
         <div class="logos-container">
+            <!-- Logo da UNEB -->
             <img class="brasao" src="items/brasaoUneb.png" alt="brasaoUneb" style="max-width: 120px; margin-right: 10px;">
+            <!-- QR Code gerado dinamicamente -->
             <div id="qrcode-container"></div>
         </div>
+        <!-- Faixa de informação abaixo das logos -->
         <div class="footer-info-strip">
             <p>Escaneie o Qr code para ver a informação</p>
         </div>
+        <!-- Onda decorativa no rodapé -->
         <div class="footer-wave">
             <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                 <path d="M0,30 Q300,60 600,40 Q900,20 1200,40 Q1350,50 1440,30 L1440,60 L0,60 Z" fill="#2c3e50"/>
             </svg>
         </div>
     </footer>
-
+    <!-- Importa o script principal da aplicação -->
     <script src="script.js"></script>
-
 </body>
 </html>
