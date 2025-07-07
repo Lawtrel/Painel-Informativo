@@ -33,7 +33,7 @@ class PlaylistService {
       const formData = new FormData();
       formData.append('filesToUpload[]', file, filename);
       
-      const response = await fetch(`${this.baseURL}/admin/upload_handler.php`, {
+      const response = await fetch(`${this.baseURL}/api/upload_handler.php`, {
         method: 'POST',
         body: formData
       });
