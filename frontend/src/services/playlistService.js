@@ -2,7 +2,7 @@ import { Playlist, PlaylistItem } from '../model/playlistModel.js';
 
 class PlaylistService {
   constructor() {
-    this.baseURL = '/Painel-Informativo';
+    this.baseURL = '/api';
   }
 
   async getPlaylist() {

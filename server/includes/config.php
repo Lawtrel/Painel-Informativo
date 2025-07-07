@@ -1,7 +1,7 @@
 <?php
 
 // Carregar as configurações do arquivo .env
-$env_path = __DIR__ . '/../.env';
+$env_path = __DIR__ . '/../../.env';
 if (file_exists($env_path)) {
     $env = parse_ini_file($env_path);
 } else {
@@ -26,7 +26,7 @@ if (ENVIRONMENT === 'production') {
 
 
 //Diretório local (em modo Desenvolvimento)
-define('SIMULATED_FTP_DIR', __DIR__ . '/../conteudo_simulado_ftp/');
+define('SIMULATED_FTP_DIR', __DIR__ . '/../../conteudo_simulado_ftp/');
 define('PLAYLIST_FILENAME', 'playlist.json');
 
 // URL base para acessar os arquivos de mídia via HTTP

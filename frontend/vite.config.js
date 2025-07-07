@@ -11,8 +11,8 @@ export default defineConfig({
   ],
 
   build:{
-    outDir: '../admin',
-    emptyOutDir: false,
+    outDir: '../server/public/admin',
+    emptyOutDir: true,
     rollupOptions: {
       output:{
         entryFileNames: 'assets/js/[name]-[hash].js',
@@ -29,6 +29,13 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     proxy: {
+      '/api' : {
+        target: 'http://localhost/painel-informativo/server/api',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
+
+      },
       '/Painel-Informativo/api': {
         target: 'http://localhost',
         changeOrigin: true,

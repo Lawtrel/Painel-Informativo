@@ -10,7 +10,7 @@ $response = [
 ];
 
 // O diretório de destino é o nosso "FTP simulado"
-$target_dir = SIMULATED_FTP_DIR;
+$target_dir = __DIR__ . '/../../conteudo_simulado_ftp/';
 
 // Verifica se o diretório de destino existe e pode ser escrito
 if (!is_dir($target_dir) || !is_writable($target_dir)) {

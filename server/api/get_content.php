@@ -25,7 +25,7 @@ if ($playlist_content_string === false) {
     if (ENVIRONMENT === 'development') {
         $response['error'] = ''; // Limpa o erro de FTP se estiver em dev
     }
-    $playlist_file_path = SIMULATED_FTP_DIR . PLAYLIST_FILENAME;
+    $playlist_file_path = __DIR__ . '/../../conteudo_simulado_ftp' . PLAYLIST_FILENAME;
     if (file_exists($playlist_file_path)) {
         $playlist_content_string = file_get_contents($playlist_file_path);
     } else {
@@ -39,7 +39,6 @@ if ($playlist_content_string) {
 
     if (json_last_error() === JSON_ERROR_NONE) {
         $response['success'] = true;
-        
         // Adiciona a URL HTTP completa aos arquivos de mídia
         if (isset($playlist_data['monitores']) && is_array($playlist_data['monitores'])) {
             foreach ($playlist_data['monitores'] as &$monitor) {

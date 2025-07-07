@@ -15,7 +15,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 }
 
 $response = ['success' => false, 'message' => ''];
-$playlist_file_path = SIMULATED_FTP_DIR . PLAYLIST_FILENAME;
+$playlist_file_path = __DIR__ . '/../../conteudo_simulado_ftp/' . PLAYLIST_FILENAME;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_playlist_json_string = file_get_contents('php://input');
