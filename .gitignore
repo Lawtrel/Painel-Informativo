@@ -25,3 +25,6 @@ dist-ssr
 
 admin/assets/
 admin/index.html
+
+# Arquivo de ambiente - NÃO ENVIAR CREDENCIAIS!
+.env

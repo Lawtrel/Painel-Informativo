@@ -1,18 +1,42 @@
 <?php
 
-define('FTP_SERVER', 'ftp.uneb.br'); // Ou o IP/host correto
-define('FTP_USERNAME', 'seu_usuario_ftp');
-define('FTP_PASSWORD', 'sua_senha_ftp');
-#define('FTP_CONTENT_DIR', '/caminho_no_ftp/para_conteudo/'); // Ex: /public_html/ppgmsbPainel_conteudo/
+// Carregar as configurações do arquivo .env
+$env_path = __DIR__ . '/../.env';
+if (file_exists($env_path)) {
+    $env = parse_ini_file($env_path);
+} else {
+    // Fallback para ambiente de desenvolvimento se .env não existir
+    $env = [
+        'ENVIRONMENT' => 'development',
+        'ADMIN_USERNAME' => 'administrator',
+        'ADMIN_PASSWORD' => ';exB.Y35&Q/1'
+    ];
+}
+
+// Define o ambiente (production ou development)
+define('ENVIRONMENT', $env['ENVIRONMENT'] ?? 'development');
+
+// Configurações do FTP
+if (ENVIRONMENT === 'production') {
+    define('FTP_SERVER', $env['FTP_SERVER']);
+    define('FTP_USERNAME', $env['FTP_USERNAME']);
+    define('FTP_PASSWORD', $env['FTP_PASSWORD']);
+    define('FTP_CONTENT_DIR', $env['FTP_CONTENT_DIR']);
+}
+
+
+//Diretório local (em modo Desenvolvimento)
 define('SIMULATED_FTP_DIR', __DIR__ . '/../conteudo_simulado_ftp/');
 define('PLAYLIST_FILENAME', 'playlist.json');
 
-// URL base para acessar os arquivos de mídia via HTTP (SE APLICÁVEL)
-// Se os arquivos FTP não são acessíveis via HTTP, deixe vazio ou comente,
-// e o Pi terá que baixar via FTP.
-define('HTTP_MEDIA_BASE_URL', 'http://localhost/Painel-Informativo/conteudo_simulado_ftp/');
+// URL base para acessar os arquivos de mídia via HTTP
+// Em produção, isso deve apontar para a URL real do seu conteúdo FTP
+$http_base_url = (ENVIRONMENT === 'production')
+    ? 'http://' . FTP_SERVER . rtrim(FTP_CONTENT_DIR, '/') . '/'
+    : 'http://localhost/Painel-Informativo/conteudo_simulado_ftp/';
+define('HTTP_MEDIA_BASE_URL', $http_base_url);
 
-// Para o painel de administração (autenticação básica)
-define('ADMIN_USERNAME', 'admin_painel');
-define('ADMIN_PASSWORD', 'senha_forte_admin'); // Troque por uma senha segura!
+// Credenciais do painel de administração
+define('ADMIN_USERNAME', $env['ADMIN_USERNAME']);
+define('ADMIN_PASSWORD', $env['ADMIN_PASSWORD']);
 ?>
