@@ -1,5 +1,4 @@
 import { Playlist, PlaylistItem } from '../model/playlistModel.js';
-import { API_BASE_URL } from '../config.js';
 
 class PlaylistService {
   async getPlaylist() {
