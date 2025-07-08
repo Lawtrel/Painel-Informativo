@@ -25,7 +25,7 @@ if ($playlist_content_string === false) {
     if (ENVIRONMENT === 'development') {
         $response['error'] = ''; // Limpa o erro de FTP se estiver em dev
     }
-    $playlist_file_path = __DIR__ . '/../../conteudo_simulado_ftp' . PLAYLIST_FILENAME;
+    $playlist_file_path = SIMULATED_FTP_DIR . PLAYLIST_FILENAME;
     if (file_exists($playlist_file_path)) {
         $playlist_content_string = file_get_contents($playlist_file_path);
     } else {
