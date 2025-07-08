@@ -1,5 +1,4 @@
 import { User } from '../model/userModel.js';
-import { API_BASE_URL } from '../config.js';
 
 class AuthService {
   async login(username, password) {
