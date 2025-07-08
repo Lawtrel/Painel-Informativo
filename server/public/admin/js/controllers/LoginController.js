@@ -1,4 +1,4 @@
-import { User } from '../models/userModel.js';
+import { SessionService } from '../services/SessionService.js';
 
 class LoginController {
   constructor() {
@@ -39,7 +39,7 @@ class LoginController {
     this.setLoading(true);
 
     try {
-      const loginSuccess = await this.login(username, password);
+      const loginSuccess = await SessionService.login(username, password);
       if (loginSuccess) {
         window.location.href = 'dashboard.html';
       }
@@ -60,30 +60,6 @@ class LoginController {
       this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
     } else if (this.originalBtnText) {
       this.submitBtn.innerHTML = this.originalBtnText;
-    }
-  }
-
-  async login(username, password) {
-    try {
-      const response = await fetch('/api/handle_login.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
-      });
-      const data = await response.json();
-      if (data.success) {
-        const authRes = await fetch('/api/check_auth.php', { credentials: 'include' });
-        const authData = await authRes.json();
-        const user = User.fromAuthResponse(authData);
-        localStorage.setItem('user', JSON.stringify(user.toJSON()));
-        return true;
-      } else {
-        this.setError(data.message || 'Usuário ou senha inválidos.');
-        return false;
-      }
-    } catch (err) {
-      this.setError('Erro ao conectar ao servidor.');
-      return false;
     }
   }
 }

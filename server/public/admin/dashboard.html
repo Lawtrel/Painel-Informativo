@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <script type="module" src="js/DashboardController.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo</title>
+    <link rel="stylesheet" href="css/dashboard-header.css">
+    <link rel="stylesheet" href="css/dashboard-breadcrumb.css">
+    <link rel="stylesheet" href="css/dashboard-footer.css">
+    <link rel="stylesheet" href="css/dashboard-monitors-status.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+    <header class="dashboard-header">
+      <div class="dashboard-header__container">
+        <div class="dashboard-header__branding">
+          <img src="../assets/uneb-seeklogo.png" alt="Logo UNEB" class="dashboard-header__logo" />
+          <div>
+            <h1 class="dashboard-header__title">Sistema de Gestão do Painel Digital</h1>
+            <p class="dashboard-header__subtitle">Universidade do Estado da Bahia - UNEB</p>
+          </div>
+        </div>
+        <div class="dashboard-header__actions">
+          <span id="session-timer" class="dashboard-header__timer"></span>
+          <button id="logout-btn" class="dashboard-header__logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            Sair
+          </button>
+        </div>
+      </div>
+    </header>
+    <main class="dashboard-main">
+      <nav class="dashboard-breadcrumb">
+        <span class="dashboard-breadcrumb__icon"><i class="fas fa-home"></i></span>
+        <span class="dashboard-breadcrumb__link">Painel de Controle</span>
+        <span class="dashboard-breadcrumb__separator">/</span>
+        <span class="dashboard-breadcrumb__current">Gestão de Conteúdo</span>
+      </nav>
+      <section class="dashboard-monitors-status">
+        <h2 class="dashboard-monitors-status__title">
+          <span class="dashboard-monitors-status__icon">
+            <i class="fas fa-tv"></i>
+          </span>
+          Status dos Monitores
+        </h2>
+        <div class="dashboard-monitors-status__cards">
+          <!-- Aqui vão os cards de cada monitor -->
+        </div>
+      </section>
+      <!-- Conteúdo principal do dashboard aqui -->
+    </main>
+    <footer class="dashboard-footer">
+      <div class="dashboard-footer__container">
+        <p>&copy; 2025 Universidade do Estado da Bahia (UNEB) - Todos os direitos reservados.</p>
+        <p class="dashboard-footer__subtitle">Sistema de Gestão do Painel Digital</p>
+      </div>
+    </footer>
+    <script type="module" src="js/MonitorsStatusController.js"></script>
+</body>
+</html>
