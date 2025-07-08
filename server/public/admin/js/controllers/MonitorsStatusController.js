@@ -116,6 +116,23 @@ function getItemStatus(item) {
   return 'pendente';
 }
 
+function getColorClass(color, type) {
+  if (!color) return type === 'bg' ? 'bg-dark' : 'text-white';
+  const map = {
+    // fundo
+    '#222': 'bg-dark',
+    '#003366': 'bg-blue',
+    '#444': 'bg-gray',
+    '#fff': 'bg-white',
+    // texto
+    '#fff': 'text-white',
+    '#ffe600': 'text-yellow',
+    '#222': 'text-black',
+    '#003366': 'text-blue',
+  };
+  return map[color] || (type === 'bg' ? 'bg-dark' : 'text-white');
+}
+
 function renderMonitorItem(item) {
   let preview = '';
   if (item.tipo === 'imagem' && item.url_http) {
@@ -123,7 +140,9 @@ function renderMonitorItem(item) {
   } else if (item.tipo === 'video' && item.url_http) {
     preview = `<video src="${item.url_http}" class="monitor-item__preview-img" controls></video>`;
   } else if (item.tipo === 'texto_simples' && item.mensagem) {
-    preview = `<div class="monitor-item__preview-texto" style="background:${item.cor_fundo || '#222'};color:${item.cor_texto || '#fff'}">${item.mensagem}</div>`;
+    const bgClass = getColorClass(item.cor_fundo, 'bg');
+    const textClass = getColorClass(item.cor_texto, 'text');
+    preview = `<div class="monitor-item__preview-texto ${bgClass} ${textClass}">${item.mensagem}</div>`;
   } else {
     preview = `<div class="monitor-item__preview-unknown"><i class="fas fa-question"></i></div>`;
   }

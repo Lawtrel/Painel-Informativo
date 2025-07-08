@@ -429,3 +429,14 @@
   background: linear-gradient(90deg, transparent 0%, #e5e7eb 50%, transparent 100%);
   border: none;
 } 
+
+/* Utilitários para preview de texto simples */
+.monitor-item__preview-texto.bg-dark { background: #222; }
+.monitor-item__preview-texto.bg-blue { background: #003366; }
+.monitor-item__preview-texto.bg-gray { background: #444; }
+.monitor-item__preview-texto.bg-white { background: #fff; }
+
+.monitor-item__preview-texto.text-white { color: #fff; }
+.monitor-item__preview-texto.text-yellow { color: #ffe600; }
+.monitor-item__preview-texto.text-black { color: #222; }
+.monitor-item__preview-texto.text-blue { color: #003366; } 
