@@ -20,6 +20,9 @@ body {
     align-items: center;
     min-height: 60px;
     position: relative;
+    box-shadow: none;
+    border-bottom: none;
+    padding-bottom: 120px; /* Tamanho do header*/
 }
 
 .logos-container {
@@ -33,10 +36,28 @@ body {
     width: auto;
 }
 
+/* Onda decorativa do cabeçalho */
+.header-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    overflow: hidden;
+    line-height: 0;
+    z-index: 1;
+}
+
+.header-wave svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 .conteudo {
     padding: 25px;
     max-width: 90vw;
-    margin: 20px auto;
+    margin: 20px auto 60px auto;
     background-color: white;
     border-radius: 25px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -67,9 +88,9 @@ body {
 
 /* --- ESTILO PARA O TEXTO PLACEHOLDER --- */
 .placeholder-text {
-    color: #999; /* Cor mais suave para o placeholder */
-    font-style: italic; /* Opcional: para diferenciar ainda mais */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            color: #999; /* Cor mais suave para o placeholder */
+            font-style: italic; /* Opcional: para diferenciar ainda mais */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
 .carousel-container {
@@ -142,25 +163,48 @@ body {
 }
 
 .qrCode {
-    background-color: #34495e;
+    position: relative;
+    background-color: #2c3e50;
     color: white;
-    padding: 20px;
     text-align: center;
-    margin-top: 30px;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+    padding: 80px 20px 40px 20px;
+    margin-top: -1px;
+    z-index: 1;
+}
+
+.footer-wave {
+    position: absolute;
+    top: -60px;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.footer-wave svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.qrCode-content {
+    position: relative;
+    z-index: 4; 
 }
 
 .qrCode img {
-    margin: 15px 0;
-    border: 5px solid white;
-    border-radius: 5%;
+    margin: 10px 0;
+    border: 4px solid white;
+    border-radius: 8px;
     max-width: 120px;
     height: auto;
 }
 
 .qrCode p {
-    margin: 5px 0;
-    font-size: 0.9em;
+    font-size: 1em;
+    margin: 10px 0 0 0;
+    color: white;
 }
 
 /* Media Query para proporção 16:9 em telas maiores (ex: monitores) */
@@ -197,7 +241,5 @@ body {
         height: 80px;
     }
 
-    .qrCode img {
-        max-width: 100px;
-    }
+
 }
