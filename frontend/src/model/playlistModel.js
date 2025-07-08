@@ -33,7 +33,7 @@ export class PlaylistItem {
     } else if (this.url_http && (this.tipo === 'imagem' || this.tipo === 'video')) {
       this.preview_url = this.url_http;
     } else if (!this.file && this.arquivo && (this.tipo === 'imagem' || this.tipo === 'video')) {
-      const baseUrl = window.location.origin + '/Painel-Informativo/conteudo_simulado_ftp/';
+      const baseUrl = window.location.origin + '/conteudo_simuilado_ftp';
       this.preview_url = baseUrl + this.arquivo;
     }
     return this.preview_url;
@@ -200,7 +200,7 @@ export class Playlist {
       versao: 0.1,
       ultima_atualizacao: this.ultima_atualizacao,
       config_geral: {
-        url_base_midia_http: "http://localhost/Painel-Informativo/conteudo_simulado_ftp/"
+        url_base_midia_http: window.location.origin + "/public_html/painel/conteudo/ "
       },
       monitores: this.monitores.map(monitor => ({
         id_monitor: monitor.id_monitor,

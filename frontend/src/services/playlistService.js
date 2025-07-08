@@ -1,13 +1,10 @@
 import { Playlist, PlaylistItem } from '../model/playlistModel.js';
+import { API_BASE_URL } from '../config.js';
 
 class PlaylistService {
-  constructor() {
-    this.baseURL = '/api';
-  }
-
   async getPlaylist() {
     try {
-      const response = await fetch(`${this.baseURL}/api/get_content.php`);
+      const response = await fetch(`/api/get_content.php`);
       const data = await response.json();
       
       if (data.success && data.data && Array.isArray(data.data.monitores)) {
@@ -33,7 +30,7 @@ class PlaylistService {
       const formData = new FormData();
       formData.append('filesToUpload[]', file, filename);
       
-      const response = await fetch(`${this.baseURL}/api/upload_handler.php`, {
+      const response = await fetch(`/api/upload_handler.php`, {
         method: 'POST',
         body: formData
       });
@@ -87,7 +84,7 @@ class PlaylistService {
       // Salvar playlist no servidor
       const playlistToSave = playlist.toSaveObject();
       
-      const response = await fetch(`${this.baseURL}/api/manage_playlist.php`, {
+      const response = await fetch(`/api/manage_playlist.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(playlistToSave)

@@ -8,7 +8,7 @@ export default function MediaPreview({ item, onPreviewClick }) {
       return item.preview_url; // Preview local para itens pendentes
     }
     if (item.arquivo) {
-      const baseUrl = window.location.origin + '/Painel-Informativo/conteudo_simulado_ftp/';
+      const baseUrl = window.location.origin + '/conteudo_simuilado_ftp';
       return baseUrl + item.arquivo;
     }
     return null;

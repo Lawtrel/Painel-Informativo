@@ -1,17 +1,14 @@
 import { User } from '../model/userModel.js';
+import { API_BASE_URL } from '../config.js';
 
 class AuthService {
-  constructor() {
-    this.baseURL = '/Painel-Informativo/api';
-  }
-
   async login(username, password) {
     try {
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
 
-      const response = await fetch(`${this.baseURL}/handle_login.php`, {
+      const response = await fetch(`/api/handle_login.php`, {
         method: 'POST',
         body: formData,
       });
@@ -40,7 +37,7 @@ class AuthService {
 
   async checkAuth() {
     try {
-      const response = await fetch(`${this.baseURL}/check_auth.php`);
+      const response = await fetch(`/api/check_auth.php`);
       const data = await response.json();
       
       if (response.ok && data.authenticated) {
@@ -77,7 +74,7 @@ class AuthService {
 
   async logout() {
     try {
-      await fetch(`${this.baseURL}/logout.php`);
+      await fetch(`/api/logout.php`);
       return { success: true };
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
