@@ -2,19 +2,27 @@
 <html lang="pt-br">
 <head>
   <script>
-    fetch('/api/check_auth.php', { credentials: 'include' })
-      .then(res => res.json())
-      .then(data => {
-        if (data.authenticated) window.location.replace('dashboard.html');
-      })
-      .catch(() => {
-        // Em caso de erro, não redireciona - deixa na tela de login
-        console.log('Erro ao verificar autenticação, permanecendo na tela de login');
-      });
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    });
+    
+    window.addEventListener('load', function() {
+      fetch('/api/check_auth.php', { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+          if (data.authenticated) window.location.replace('dashboard.php');
+        })
+        .catch(() => {
+          console.log('Erro ao verificar autenticação, permanecendo na tela de login');
+        });
+    });
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Painel Informativo</title>
+  <link rel="icon" type="image/png" href="../assets/uneb-seeklogo.png">
   <link rel="stylesheet" href="css/login.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <script type="module" src="js/controllers/LoginController.js"></script>

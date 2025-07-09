@@ -1,4 +1,3 @@
-import { PlaylistService } from '../services/PlaylistService.js';
 import { MONITORES } from '../constants/monitors.js';
 
 function createMonitorItem(item) {
@@ -141,9 +140,10 @@ function renderMonitorItem(item) {
   } else if (item.tipo === 'video' && item.url_http) {
     preview = `<video src="${item.url_http}" class="monitor-item__preview-img" controls></video>`;
   } else if (item.tipo === 'texto_simples' && item.mensagem) {
-    const bgClass = getColorClass(item.cor_fundo, 'bg');
-    const textClass = getColorClass(item.cor_texto, 'text');
-    preview = `<div class="monitor-item__preview-texto ${bgClass} ${textClass}">${item.mensagem}</div>`;
+    // Aplica cor de fundo e cor do texto diretamente do JSON
+    const bg = item.cor_fundo || '#222';
+    const color = item.cor_texto || '#fff';
+    preview = `<div class="monitor-item__preview-texto" style="background:${bg};color:${color}">${item.mensagem}</div>`;
   } else {
     preview = `<div class="monitor-item__preview-unknown"><i class="fas fa-question"></i></div>`;
   }

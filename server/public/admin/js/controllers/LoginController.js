@@ -44,7 +44,7 @@ class LoginController {
       });
       const data = await response.json();
       if (response.ok && data.success) {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'dashboard.php';
       } else {
         this.setError(data.message || 'Usuário ou senha incorretos.');
       }

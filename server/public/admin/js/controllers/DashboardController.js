@@ -13,10 +13,17 @@ class DashboardController {
   }
 
   async init() {
+    
     const isAuthenticated = await AuthGuard.checkAuth();
     if (!isAuthenticated) {
       return; 
     }
+
+    // Mostrar conteúdo da dashboard e remover spinner
+    const dashboardContent = document.getElementById('dashboard-content');
+    const spinner = document.getElementById('global-spinner');
+    if (dashboardContent) dashboardContent.style.display = '';
+    if (spinner) spinner.style.display = 'none';
 
     // Se estiver autenticado, continua com a inicialização
     const user = await SessionService.checkSession();
@@ -117,7 +124,6 @@ function setupUploadForm() {
       if (result.success && result.playlist) {
         playlist = result.playlist;
         window.playlistGlobal = playlist;
-        console.log('Playlist carregada do servidor:', JSON.stringify(playlist.toSaveObject(), null, 2));
       } else {
         playlist = Playlist.createEmpty();
         window.playlistGlobal = playlist;

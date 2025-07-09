@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redirecionando...</title>
+  <title>Painel Informativo</title>
+  <link rel="icon" type="image/png" href="../assets/uneb-seeklogo.png">
   <script>
     fetch('/api/check_auth.php', { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
-        window.location.replace(data.authenticated ? 'dashboard.html' : 'login.html');
+        window.location.replace(data.authenticated ? 'dashboard.php' : 'login.html');
       });
   </script>
   <style>
