@@ -2,6 +2,7 @@ import { SessionService } from '../services/SessionService.js';
 import { AuthGuard } from '../services/AuthGuard.js';
 import { MONITORES } from '../constants/monitors.js';
 import { Playlist, PlaylistItem } from '../models/Playlist.js';
+import { ItemPreviewModal } from '../itemPreviewModal.js';
 
 class DashboardController {
   constructor() {
@@ -139,6 +140,13 @@ function setupUploadForm() {
   }
 
   loadPlaylist();
+
+  // Inicializar filtro de tipos de arquivo
+  if (tipoSelect.value === 'imagem') {
+    fileInput.accept = 'image/jpeg,image/png,image/gif';
+  } else {
+    fileInput.accept = 'video/mp4,video/webm,video/quicktime';
+  }
 
   // Função para obter resolução de arquivo
   function getFileResolution(file) {
@@ -301,7 +309,7 @@ function setupUploadForm() {
       }
       
       pendingItemDiv.innerHTML = `
-        <div class="monitor-item__preview">
+        <div class="monitor-item__preview" style="cursor: pointer;">
           ${preview}
         </div>
         <div class="monitor-item__info">
@@ -314,6 +322,10 @@ function setupUploadForm() {
           <i class="fas fa-times"></i>
         </button>
       `;
+      // Adiciona o event listener para abrir o modal
+      pendingItemDiv.querySelector('.monitor-item__preview').onclick = () => {
+        itemPreviewModal.show(item, getMonitorName(parseInt(item.monitorId)), (itemToRemove) => removePendingItem(itemToRemove.id));
+      };
       
       content.appendChild(pendingItemDiv);
     });
@@ -353,7 +365,7 @@ function setupUploadForm() {
       }
       
       pendingItemDiv.innerHTML = `
-        <div class="monitor-item__preview">
+        <div class="monitor-item__preview" style="cursor: pointer;">
           ${preview}
         </div>
         <div class="monitor-item__info">
@@ -366,6 +378,10 @@ function setupUploadForm() {
           <i class="fas fa-times"></i>
         </button>
       `;
+      // Adiciona o event listener para abrir o modal
+      pendingItemDiv.querySelector('.monitor-item__preview').onclick = () => {
+        itemPreviewModal.show(item, getMonitorName(parseInt(item.monitorId)), (itemToRemove) => removePendingItem(itemToRemove.id));
+      };
       
       content.appendChild(pendingItemDiv);
     });
@@ -579,9 +595,11 @@ function setupUploadForm() {
     if (tipoSelect.value === 'imagem') {
       dropzoneIcon.innerHTML = '<i class="fas fa-image"></i>';
       dropzoneDesc.textContent = 'Formatos aceitos: JPG, PNG, GIF';
+      fileInput.accept = 'image/jpeg,image/png,image/gif';
     } else {
       dropzoneIcon.innerHTML = '<i class="fas fa-video"></i>';
       dropzoneDesc.textContent = 'Formatos aceitos: MP4, WEBM, MOV';
+      fileInput.accept = 'video/mp4,video/webm,video/quicktime';
     }
   });
 
@@ -636,7 +654,40 @@ function setupUploadForm() {
       return;
     }
     selectedFile = file;
+    
+    // Se for vídeo, detectar duração automaticamente
+    if (tipo === 'video') {
+      detectVideoDuration(file);
+    }
+    
     showPreview();
+  }
+
+  // Função para detectar duração do vídeo
+  function detectVideoDuration(file) {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    
+    video.onloadedmetadata = () => {
+      const duration = Math.ceil(video.duration);
+      duracaoInput.value = duration;
+      
+      // Mostrar mensagem informativa
+      statusDiv.textContent = `Duração detectada: ${duration} segundos`;
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'upload-status success';
+      
+      // Limpar mensagem após 3 segundos
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    };
+    
+    video.onerror = () => {
+      console.warn('Não foi possível detectar a duração do vídeo');
+    };
+    
+    video.src = URL.createObjectURL(file);
   }
 
   async function showPreview() {
@@ -710,6 +761,40 @@ function setupUploadForm() {
       statusDiv.style.display = 'none';
       statusDiv.classList.remove('success', 'warning', 'error');
     };
+
+    // Adicionar event listener para abrir o modal ao clicar na imagem/vídeo do preview
+    setTimeout(() => {
+      const img = filePreview.querySelector('.upload-preview-img');
+      const video = filePreview.querySelector('.upload-preview-video');
+      if (img) {
+        img.style.cursor = 'pointer';
+        img.onclick = () => {
+          itemPreviewModal.show({
+            tipo: 'imagem',
+            arquivo: selectedFile.name,
+            duracao_s: 10, // valor padrão, pois não faz sentido para imagem
+            monitorId: monitorSelect.value || '-',
+            resolucao: resolution ? `${resolution.width}x${resolution.height}` : '-',
+            tamanho: selectedFile.size,
+            preview_url: imagePreviewUrl
+          }, getMonitorName(parseInt(monitorSelect.value) || 0), null);
+        };
+      }
+      if (video) {
+        video.style.cursor = 'pointer';
+        video.onclick = () => {
+          itemPreviewModal.show({
+            tipo: 'video',
+            arquivo: selectedFile.name,
+            duracao_s: duracaoInput.value || 10,
+            monitorId: monitorSelect.value || '-',
+            resolucao: resolution ? `${resolution.width}x${resolution.height}` : '-',
+            tamanho: selectedFile.size,
+            preview_url: imagePreviewUrl
+          }, getMonitorName(parseInt(monitorSelect.value) || 0), null);
+        };
+      }
+    }, 0);
   }
 
   // Visualizar (abre preview em modal simples)
@@ -837,6 +922,11 @@ window.adicionarNovoItemNaPlaylist = function(monitorId, novoItem) {
 };
 // Ao chamar savePlaylist(), a playlist local (model) já contém todos os itens antigos + novos.
 // O método savePlaylist envia a lista completa para o backend, que sobrescreve o playlist.json.
+
+// Instância única do modal
+const itemPreviewModal = new ItemPreviewModal();
+// Tornar acessível globalmente
+window.itemPreviewModal = itemPreviewModal;
 
 document.addEventListener('DOMContentLoaded', () => {
   new DashboardController();

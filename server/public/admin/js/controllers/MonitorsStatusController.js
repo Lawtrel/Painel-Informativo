@@ -136,16 +136,16 @@ function getColorClass(color, type) {
 function renderMonitorItem(item) {
   let preview = '';
   if (item.tipo === 'imagem' && item.url_http) {
-    preview = `<img src="${item.url_http}" alt="${item.arquivo}" class="monitor-item__preview-img" />`;
+    preview = `<img src="${item.url_http}" alt="${item.arquivo}" class="monitor-item__preview-img" style="cursor: pointer;" />`;
   } else if (item.tipo === 'video' && item.url_http) {
-    preview = `<video src="${item.url_http}" class="monitor-item__preview-img" controls></video>`;
+    preview = `<video src="${item.url_http}" class="monitor-item__preview-img" controls style="cursor: pointer;"></video>`;
   } else if (item.tipo === 'texto_simples' && item.mensagem) {
     // Aplica cor de fundo e cor do texto diretamente do JSON
     const bg = item.cor_fundo || '#222';
     const color = item.cor_texto || '#fff';
-    preview = `<div class="monitor-item__preview-texto" style="background:${bg};color:${color}">${item.mensagem}</div>`;
+    preview = `<div class="monitor-item__preview-texto" style="background:${bg};color:${color};cursor: pointer;">${item.mensagem}</div>`;
   } else {
-    preview = `<div class="monitor-item__preview-unknown"><i class="fas fa-question"></i></div>`;
+    preview = `<div class="monitor-item__preview-unknown" style="cursor: pointer;"><i class="fas fa-question"></i></div>`;
   }
 
   // Status
@@ -189,14 +189,16 @@ function renderMonitorItem(item) {
     `;
   }
 
-  return `
+  const itemHtml = `
     <div class="monitor-item">
-      <div class="monitor-item__preview">${preview}</div>
+      <div class="monitor-item__preview" onclick="showItemPreviewFromStatus(${JSON.stringify(item).replace(/"/g, '&quot;')})">${preview}</div>
       <div class="monitor-item__info">
         ${infoContent}
       </div>
     </div>
   `;
+  
+  return itemHtml;
 }
 
 function showLoading() {
@@ -213,6 +215,14 @@ window.updateMonitorsStatus = function() {
   const playlist = window.playlistGlobal;
   if (!playlist || !playlist.monitores) return;
   renderMonitorsStatus(playlist.monitores);
+};
+
+// Função global para mostrar preview de itens do status
+window.showItemPreviewFromStatus = function(item) {
+  if (window.itemPreviewModal) {
+    const monitorName = getMonitorLabel(item.id_monitor || item.monitorId);
+    window.itemPreviewModal.show(item, monitorName, null);
+  }
 };
 
 document.addEventListener('DOMContentLoaded', async function() {

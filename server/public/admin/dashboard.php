@@ -19,6 +19,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     <link rel="stylesheet" href="css/dashboard-footer.css">
     <link rel="stylesheet" href="css/dashboard-monitors-status.css">
     <link rel="stylesheet" href="css/dashboard-content-manager.css">
+    <link rel="stylesheet" href="item-preview-modal.css">
   </head>
 <body>
   <div id="dashboard-content" style="display:none">
@@ -163,10 +164,71 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
         <p class="dashboard-footer__subtitle">Sistema de Gestão do Painel Digital</p>
       </div>
     </footer>
+    
+    <!-- Modal de Visualização de Item -->
+    <div id="item-preview-modal" class="item-preview-modal" style="display: none;">
+      <div class="item-preview-modal__overlay"></div>
+      <div class="item-preview-modal__content">
+        <div class="item-preview-modal__header">
+          <h3 class="item-preview-modal__title">
+            <i class="fas fa-eye"></i> Detalhes do Item
+          </h3>
+          <button class="item-preview-modal__close" id="close-preview-modal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="item-preview-modal__body">
+          <div class="item-preview-modal__preview">
+            <img id="modal-preview-img" src="" alt="" class="item-preview-modal__image" />
+            <video id="modal-preview-video" src="" controls class="item-preview-modal__video" style="display: none;"></video>
+          </div>
+          <div class="item-preview-modal__info">
+            <div class="item-preview-modal__info-group">
+              <label class="item-preview-modal__label">Tipo de Conteúdo:</label>
+              <span id="modal-item-type" class="item-preview-modal__value"></span>
+            </div>
+            <div class="item-preview-modal__info-group">
+              <label class="item-preview-modal__label">Nome do Arquivo:</label>
+              <span id="modal-item-filename" class="item-preview-modal__value"></span>
+            </div>
+            <div class="item-preview-modal__info-group">
+              <label class="item-preview-modal__label">Duração de Exibição:</label>
+              <span id="modal-item-duration" class="item-preview-modal__value"></span>
+            </div>
+            <div class="item-preview-modal__info-group">
+              <label class="item-preview-modal__label">Monitor:</label>
+              <span id="modal-item-monitor" class="item-preview-modal__value"></span>
+            </div>
+            <div class="item-preview-modal__info-group">
+              <label class="item-preview-modal__label">Resolução:</label>
+              <span id="modal-item-resolution" class="item-preview-modal__value"></span>
+            </div>
+            <div class="item-preview-modal__info-group">
+              <label class="item-preview-modal__label">Tamanho do Arquivo:</label>
+              <span id="modal-item-filesize" class="item-preview-modal__value"></span>
+            </div>
+            <div class="item-preview-modal__info-group">
+              <label class="item-preview-modal__label">Status:</label>
+              <span id="modal-item-status" class="item-preview-modal__value"></span>
+            </div>
+          </div>
+        </div>
+        <div class="item-preview-modal__footer">
+          <button class="item-preview-modal__btn item-preview-modal__btn--secondary" id="modal-remove-item">
+            <i class="fas fa-trash"></i> Remover Item
+          </button>
+          <button class="item-preview-modal__btn item-preview-modal__btn--primary" id="modal-close-btn">
+            <i class="fas fa-check"></i> Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+    
     <script type="module" src="js/models/Playlist.js"></script>
     <script type="module" src="js/services/PlaylistService.js"></script>
     <script type="module" src="js/controllers/DashboardController.js"></script>
     <script type="module" src="js/controllers/MonitorsStatusController.js"></script>
+    <script type="module" src="js/itemPreviewModal.js"></script>
   </div>
 </body>
 </html>
