@@ -7,7 +7,10 @@
       .then(data => {
         if (data.authenticated) window.location.replace('dashboard.html');
       })
-      .catch(() => window.location.replace('dashboard.html'));
+      .catch(() => {
+        // Em caso de erro, não redireciona - deixa na tela de login
+        console.log('Erro ao verificar autenticação, permanecendo na tela de login');
+      });
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

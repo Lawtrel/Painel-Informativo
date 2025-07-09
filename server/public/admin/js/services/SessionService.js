@@ -8,17 +8,24 @@ export class SessionService {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
       });
+      
+      if (!response.ok) {
+        return false;
+      }
+      
       const data = await response.json();
       if (data.success) {
         const authRes = await fetch('/api/check_auth.php', { credentials: 'include' });
-        const authData = await authRes.json();
-        const user = User.fromAuthResponse(authData);
-        localStorage.setItem('user', JSON.stringify(user.toJSON()));
-        return true;
-      } else {
-        return false;
+        if (authRes.ok) {
+          const authData = await authRes.json();
+          const user = User.fromAuthResponse(authData);
+          localStorage.setItem('user', JSON.stringify(user.toJSON()));
+          return true;
+        }
       }
+      return false;
     } catch (err) {
+      console.error('Erro no login:', err);
       return false;
     }
   }
@@ -29,6 +36,8 @@ export class SessionService {
       localStorage.removeItem('user');
       return true;
     } catch (err) {
+      console.error('Erro no logout:', err);
+      localStorage.removeItem('user'); // Remove mesmo se der erro
       return false;
     }
   }
@@ -36,6 +45,12 @@ export class SessionService {
   static async checkSession() {
     try {
       const response = await fetch('/api/check_auth.php', { credentials: 'include' });
+      
+      if (!response.ok) {
+        localStorage.removeItem('user');
+        return null;
+      }
+      
       const data = await response.json();
       if (data.authenticated) {
         const user = User.fromAuthResponse(data);
@@ -46,6 +61,7 @@ export class SessionService {
         return null;
       }
     } catch (err) {
+      console.error('Erro ao verificar sessão:', err);
       localStorage.removeItem('user');
       return null;
     }

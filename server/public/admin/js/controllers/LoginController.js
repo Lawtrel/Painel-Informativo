@@ -1,5 +1,3 @@
-import { SessionService } from '../services/SessionService.js';
-
 class LoginController {
   constructor() {
     this.form = document.getElementById('loginForm');
@@ -39,10 +37,19 @@ class LoginController {
     this.setLoading(true);
 
     try {
-      const loginSuccess = await SessionService.login(username, password);
-      if (loginSuccess) {
+      const response = await fetch('/api/handle_login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
         window.location.href = 'dashboard.html';
+      } else {
+        this.setError(data.message || 'Usuário ou senha incorretos.');
       }
+    } catch (err) {
+      this.setError('Erro ao tentar fazer login.');
     } finally {
       this.setLoading(false);
     }

@@ -1,4 +1,5 @@
 import { PlaylistService } from '../services/PlaylistService.js';
+import { MONITORES } from '../constants/monitors.js';
 
 function createMonitorItem(item) {
   const itemDiv = document.createElement('div');
@@ -90,7 +91,7 @@ function renderMonitorsStatus(monitores) {
     card.innerHTML = `
       <div class="monitor-card__header">
         <span class="monitor-card__icon"><i class="fas fa-tv"></i></span>
-        <span class="monitor-card__title">Monitor ${monitor.id_monitor || ''}</span>
+        <span class="monitor-card__title">${getMonitorLabel(monitor.id_monitor)}</span>
         <span class="monitor-card__count">${monitor.itens && monitor.itens.length ? monitor.itens.length : 0} ${monitor.itens && monitor.itens.length === 1 ? 'item' : 'itens'}</span>
       </div>
       <div class="monitor-card__content">
@@ -203,7 +204,17 @@ function showLoading() {
   container.innerHTML = '<div style="width:100%;text-align:center;padding:2rem 0;color:#003366;font-size:1.1rem;">Carregando monitores...</div>';
 }
 
+function getMonitorLabel(id) {
+  const monitor = MONITORES.find(m => m.value == id);
+  return monitor ? monitor.label : `Monitor ${id}`;
+}
+
+window.updateMonitorsStatus = function() {
+  const playlist = window.playlistGlobal;
+  if (!playlist || !playlist.monitores) return;
+  renderMonitorsStatus(playlist.monitores);
+};
+
 document.addEventListener('DOMContentLoaded', async function() {
-  const monitores = await fetchMonitorsFromAPI();
-  renderMonitorsStatus(monitores);
+
 }); 
