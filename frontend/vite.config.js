@@ -1,59 +1,63 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from 'vite';
+import { createHtmlPlugin } from 'vite-plugin-html';
 
-// https://vite.dev/config/
 export default defineConfig({
   base: './',
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
-
-  build:{
-    outDir: '../server/public/admin',
+  root: 'src',
+  build: {
+    outDir: '../../server/public/admin',
     emptyOutDir: true,
+    sourcemap: false,
+    minify: 'terser',
     rollupOptions: {
-      output:{
-        entryFileNames: 'assets/js/[name]-[hash].js',
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-      }
+      input: {
+        login: 'src/login.html',
+        index: 'src/index.html',
+        dashboard: 'src/dashboard.html',
+      },
+      output: {
+        entryFileNames: 'js/[name]-[hash].js',
+        chunkFileNames: 'js/[name]-[hash].js',
+        assetFileNames: (assetInfo) => {
+          const fileName = assetInfo.fileName || assetInfo.name || '';
+          
+          if (/\.(css)$/.test(fileName)) {
+            return 'css/[name]-[hash].[ext]';
+          }
+          if (/\.(woff|woff2|ttf|eot)$/.test(fileName)) {
+            return 'fonts/[name]-[hash].[ext]';
+          }
+          if (/\.(png|jpe?g|gif|svg|ico|webp)$/.test(fileName)) {
+            return 'images/[name]-[hash].[ext]';
+          }
+          
+          return 'assets/[name]-[hash].[ext]';
+        },
+      },
     },
-    cssCodeSplit: false,
-    minify: 'esbuild',
-    copyPublicDir: true,
   },
-
+  plugins: [
+    createHtmlPlugin({
+      minify: {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+      },
+    }),
+  ],
   server: {
     port: 3000,
-    strictPort: true,
+    open: true,
     proxy: {
-      '/api' : {
-        target: 'http://localhost/painel-informativo/server/api',
+      '/api': {
+        target: 'http://localhost:80',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
-
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
       },
-      '/Painel-Informativo/api': {
-        target: 'http://localhost',
-        changeOrigin: true,
-        secure: false
-      },
-      '/Painel-Informativo/admin': {
-        target: 'http://localhost',
-        changeOrigin: true,
-        secure: false
-      }
-    }
+    },
   },
-
-  css: {
-    devSourcemap: false,
-  },
-
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
-  },
-})
+  publicDir: '../public',
+});
