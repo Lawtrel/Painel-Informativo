@@ -1,95 +1,11 @@
-import { AuthService } from '../services/AuthService.js';
 import { MONITORES } from '../constants/monitors.js';
 import { Playlist, PlaylistItem } from '../models/Playlist.js';
 import { ItemPreviewModal } from '../itemPreviewModal.js';
 
 class DashboardController {
-  constructor() {
-    this.timerEl = document.getElementById('session-timer');
-    this.logoutBtn = document.getElementById('logout-btn');
-    this.timeLeft = 0;
-    this.timerInterval = null;
-    this.init();
-  }
 
-  async init() {
-    
-    // Verificar autenticação apenas uma vez
-    const user = await AuthService.checkSession();
-    if (!user) {
-      AuthService.redirectToLogin();
-      return; 
-    }
-
-    // Se estiver autenticado, continua com a inicialização
-    if (user.remainingTime) {
-      this.timeLeft = user.remainingTime;
-      this.startTimer();
-    }
-    
-    // Verificação periódica de sessão (a cada 30 segundos)
-    this.sessionCheckInterval = setInterval(async () => {
-      const currentUser = await AuthService.checkSession();
-      if (!currentUser) {
-        clearInterval(this.sessionCheckInterval);
-        AuthService.redirectToLogin();
-      }
-    }, 30000); // 30 segundos
-    
-    this.logoutBtn.addEventListener('click', async () => {
-      await AuthService.logout();
-      AuthService.redirectToLogin();
-    });
   }
-
-  startTimer() {
-    this.updateTimerUI();
-    this.timerInterval = setInterval(() => {
-      this.timeLeft--;
-      this.updateTimerUI();
-      if (this.timeLeft <= 0) {
-        clearInterval(this.timerInterval);
-        this.handleSessionExpire();
-      }
-    }, 1000);
-  }
-
-  updateTimerUI() {
-    if (this.timerEl) {
-      this.timerEl.textContent = this.formatTime(this.timeLeft);
-      this.timerEl.classList.remove(
-        'dashboard-header__timer--white',
-        'dashboard-header__timer--yellow',
-        'dashboard-header__timer--red'
-      );
-      if (!this.timeLeft || this.timeLeft <= 0 || this.timeLeft <= 300) {
-        this.timerEl.classList.add('dashboard-header__timer--red');
-      } else if (this.timeLeft <= 600) {
-        this.timerEl.classList.add('dashboard-header__timer--yellow');
-      } else {
-        this.timerEl.classList.add('dashboard-header__timer--white');
-      }
-    }
-  }
-
-  formatTime(seconds) {
-    if (!seconds || seconds <= 0) return '00:00';
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  }
-
-  async handleSessionExpire() {
-    try {
-      await AuthService.logout();
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    } finally {
-      // Sempre redireciona, mesmo se o logout falhar
-      AuthService.redirectToLogin();
-    }
-  }
-}
+  
 
 // Lógica JS para upload de conteúdo
 function setupUploadForm() {

@@ -2,7 +2,7 @@
     "versao": 0.1,
     "ultima_atualizacao": "2025-05-29T12:00:00Z",
     "config_geral": {
-      "url_base_midia_http": "http://localhost/ppgmsbPainel_local_test/conteudo_simulado_ftp/"
+      "url_base_midia_http": "http://localhost/Painel-Informativo/conteudo_simulado_ftp/"
     },
     "monitores": [
       {

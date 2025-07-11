@@ -1,90 +1,66 @@
+<?php
+require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/config.php';
+
+// Carregar playlist.json
+$playlist_file_path = SIMULATED_FTP_DIR . PLAYLIST_FILENAME;
+$playlist_data = [
+    'monitores' => []
+];
+if (file_exists($playlist_file_path)) {
+    $playlist_content_string = file_get_contents($playlist_file_path);
+    $playlist_data = json_decode($playlist_content_string, true);
+    if (!is_array($playlist_data)) {
+        $playlist_data = ['monitores' => []];
+    }
+}
+// Função utilitária para obter nome do monitor
+function getMonitorName($id) {
+    $monitores = [
+        0 => 'Monitor 1',
+        1 => 'Monitor 2',
+        2 => 'Monitor 3',
+        3 => 'Monitor 4',
+    ];
+    return $monitores[$id] ?? ("Monitor #$id");
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo</title>
-    <link rel="icon" type="image/png" href="./uneb-seeklogo.png">
+    <link rel="icon" type="image/png" href="assets/uneb-seeklogo.png">
     <link rel="stylesheet" href="css/main.css">
-    
     <link rel="stylesheet" href="css/dashboard-header.css">
     <link rel="stylesheet" href="css/dashboard-breadcrumb.css">
     <link rel="stylesheet" href="css/dashboard-footer.css">
     <link rel="stylesheet" href="css/dashboard-monitors-status.css">
     <link rel="stylesheet" href="css/dashboard-content-manager.css">
     <link rel="stylesheet" href="css/item-preview-modal.css">
-    <style>
-      #global-spinner {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #003366 0%, #2563eb 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-      }
-      
-      .spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(255, 255, 255, 0.3);
-        border-top: 4px solid #ffffff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto;
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      .spinner-text {
-        color: white;
-        margin-top: 15px;
-        font-size: 16px;
-        font-weight: 500;
-        text-align: center;
-        letter-spacing: 0.5px;
-      }
-      
-      .spinner-container {
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-    </style>
-  </head>
+    <link rel="stylesheet" href="assets/fonts/inter/fonts.css">
+    <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
+</head>
 <body>
-  <!-- Spinner de loading -->
-  <div id="global-spinner">
-    <div class="spinner-container">
-      <div class="spinner"></div>
-      <div class="spinner-text">Carregando...</div>
-    </div>
-  </div>
-
-  <div id="dashboard-content" style="display:none">
+  <div id="dashboard-content">
     <header class="dashboard-header">
       <div class="dashboard-header__container">
         <div class="dashboard-header__branding">
-          <img src="./uneb-seeklogo.png" alt="Logo UNEB" class="dashboard-header__logo" />
+          <img src="assets/uneb-seeklogo.png" alt="Logo UNEB" class="dashboard-header__logo" />
           <div>
             <h1 class="dashboard-header__title">Sistema de Gestão do Painel Digital</h1>
             <p class="dashboard-header__subtitle">Universidade do Estado da Bahia - UNEB</p>
           </div>
         </div>
         <div class="dashboard-header__actions">
-          <span id="session-timer" class="dashboard-header__timer"></span>
-          <button id="logout-btn" class="dashboard-header__logout-btn">
-            <i class="fas fa-sign-out-alt"></i>
-            Sair
-          </button>
+          <span id="session-timer" class="dashboard-header__timer dashboard-header__timer--white">Sessão: --:--</span>
+          <form method="POST" action="../../api/logout.php" style="display:inline;">
+            <button type="submit" id="logout-btn" class="dashboard-header__logout-btn">
+              <i class="fas fa-sign-out-alt"></i>
+              Sair
+            </button>
+          </form>
         </div>
       </div>
     </header>
@@ -138,7 +114,6 @@
                 </select>
               </div>
             </div>
-
             <div class="upload-area">
               <div id="file-dropzone" class="upload-dropzone">
                 <input id="file-input" type="file" class="upload-input" accept="image/*,video/*" />
@@ -166,9 +141,8 @@
             </div>
           </form>
         </div>
-        
-        <!-- Seção Salvar Alterações -->
-        <section class="dashboard-save-actions">
+      <!-- Seção Salvar Alterações -->
+      <section class="dashboard-save-actions">
           <div class="dashboard-save-actions__header">
             <h2 class="dashboard-save-actions__title">
               <i class="fas fa-save"></i> Salvar Alterações
@@ -208,15 +182,66 @@
         <p class="dashboard-footer__subtitle">Sistema de Gestão do Painel Digital</p>
       </div>
     </footer>
-    
-    <!-- Modal de Visualização de Item será criado dinamicamente pelo JavaScript -->
-    
-    <script type="module" src="js/services/AuthService.js"></script>
     <script type="module" src="js/models/Playlist.js"></script>
     <script type="module" src="js/services/PlaylistService.js"></script>
     <script type="module" src="js/controllers/DashboardController.js"></script>
     <script type="module" src="js/controllers/MonitorsStatusController.js"></script>
     <script type="module" src="js/itemPreviewModal.js"></script>
+    <script>
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = seconds % 60;
+      return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+    let sessionRemaining = null;
+    let sessionInterval = null;
+    function updateSessionTimer() {
+      const timerEl = document.getElementById('session-timer');
+      if (sessionRemaining !== null && timerEl) {
+        timerEl.textContent = 'Sessão: ' + formatTime(sessionRemaining);
+        timerEl.classList.remove('dashboard-header__timer--white', 'dashboard-header__timer--yellow', 'dashboard-header__timer--red');
+        if (sessionRemaining <= 60) {
+          timerEl.classList.add('dashboard-header__timer--red');
+        } else if (sessionRemaining <= 300) {
+          timerEl.classList.add('dashboard-header__timer--yellow');
+        } else {
+          timerEl.classList.add('dashboard-header__timer--white');
+        }
+        if (sessionRemaining <= 0) {
+          clearInterval(sessionInterval);
+          alert('Sua sessão expirou! Você será redirecionado para o login.');
+          window.location.href = 'login.php?expired=1';
+        }
+        sessionRemaining--;
+      }
+    }
+    function fetchSessionTime() {
+      fetch('../../api/check_auth.php')
+        .then(res => {
+          if (!res.ok) throw new Error('Sessão expirada');
+          return res.json();
+        })
+        .then(data => {
+          if (data.authenticated && typeof data.remaining_time === 'number') {
+            sessionRemaining = data.remaining_time;
+            updateSessionTimer();
+            if (!sessionInterval) {
+              sessionInterval = setInterval(updateSessionTimer, 1000);
+            }
+          } else {
+            throw new Error('Sessão expirada');
+          }
+        })
+        .catch(() => {
+          alert('Sua sessão expirou! Você será redirecionado para o login.');
+          window.location.href = 'login.php?expired=1';
+        });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchSessionTime();
+      setInterval(fetchSessionTime, 60000); // Atualiza do servidor a cada 15s para garantir precisão
+    });
+    </script>
   </div>
 </body>
 </html>

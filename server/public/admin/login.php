@@ -1,78 +1,35 @@
+<?php
+session_start();
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+header("Pragma: no-cache");
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    header('Location: dashboard.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Painel Informativo</title>
-  <link rel="icon" type="image/png" href="./uneb-seeklogo.png">
+  <link rel="icon" type="image/png" href="assets/uneb-seeklogo.png">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/login.css">
-  <script type="module" src="js/services/AuthService.js"></script>
+  <link rel="stylesheet" href="assets/fonts/inter/fonts.css">
+  <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
   <script type="module" src="js/controllers/LoginController.js"></script>
-  <style>
-    #login-spinner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #003366 0%, #2563eb 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-top: 4px solid #ffffff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .spinner-text {
-      color: white;
-      margin-top: 15px;
-      font-size: 16px;
-      font-weight: 500;
-      text-align: center;
-      letter-spacing: 0.5px;
-    }
-    
-    .spinner-container {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-  </style>
 </head>
 <body>
-  <!-- Spinner de loading -->
-  <div id="login-spinner">
-    <div class="spinner-container">
-      <div class="spinner"></div>
-      <div class="spinner-text">Carregando...</div>
-    </div>
-  </div>
-
   <div class="login-bg"></div>
   <main class="login-container" id="login-container">
-    <img src="./uneb-seeklogo.png" alt="Logo UNEB" class="login-logo" />
+    <img src="assets/uneb-seeklogo.png" alt="Logo UNEB" class="login-logo" />
     <h1 class="login-title">Painel Informativo</h1>
     <p class="login-subtitle">
         Faça login para acessar o painel administrativo
     </p>
-    <form id="loginForm" class="space-y-6">
+    <form id="loginForm" class="space-y-6" action="../../api/handle_login.php" method="POST">
       <div id="errorMsg" class="error-msg" style="display:none;">
         <i class="fas fa-exclamation-triangle"></i>
         <span></span>
@@ -84,7 +41,7 @@
         </label>
         <div class="input-wrapper">
           <span class="input-icon"><i class="fas fa-user"></i></span>
-          <input type="text" id="username" class="login-input" placeholder="Digite seu usuário" required />
+          <input type="text" id="username" name="username" class="login-input" placeholder="Digite seu usuário" required />
         </div>
       </div>
       <div class="login-input-group">
@@ -94,7 +51,7 @@
         </label>
         <div class="input-wrapper">
           <span class="input-icon"><i class="fas fa-lock"></i></span>
-          <input type="password" id="password" class="login-input" placeholder="Digite sua senha" required />
+          <input type="password" id="password" name="password" class="login-input" placeholder="Digite sua senha" required />
           <button type="button" id="togglePassword" class="toggle-password" title="Mostrar/ocultar senha">
             <i class="fas fa-eye"></i>
           </button>
