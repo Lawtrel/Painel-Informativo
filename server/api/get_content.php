@@ -1,5 +1,6 @@
 <?php
 // api/get_content.php
+require_once __DIR__ . '/../includes/auth.php';
 header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/ftp_helper.php';
@@ -25,7 +26,7 @@ if ($playlist_content_string === false) {
     if (ENVIRONMENT === 'development') {
         $response['error'] = ''; // Limpa o erro de FTP se estiver em dev
     }
-    $playlist_file_path = __DIR__ . '/../../conteudo_simulado_ftp' . PLAYLIST_FILENAME;
+    $playlist_file_path = SIMULATED_FTP_DIR . PLAYLIST_FILENAME;
     if (file_exists($playlist_file_path)) {
         $playlist_content_string = file_get_contents($playlist_file_path);
     } else {

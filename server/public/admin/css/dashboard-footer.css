@@ -1,0 +1,20 @@
+.dashboard-footer {
+  background: #003366;
+  color: #fff;
+  padding: 2rem 0 1.5rem 0;
+  box-shadow: 0 -2px 8px 0 rgba(0,0,0,0.04) inset;
+  margin-top: 2.5rem;
+}
+
+.dashboard-footer__container {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 0.98rem;
+}
+
+.dashboard-footer__subtitle {
+  opacity: 0.8;
+  font-size: 0.95rem;
+  margin-top: 0.2rem;
+} 
