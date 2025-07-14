@@ -194,6 +194,11 @@ function renderMonitorItem(item) {
       <div class="monitor-item__preview" onclick="showItemPreviewFromStatus(${JSON.stringify(item).replace(/"/g, '&quot;')})">${preview}</div>
       <div class="monitor-item__info">
         ${infoContent}
+        </div>
+      <div class="monitor-item__actions">
+          <button class="monitor-item__delete-btn" onclick="handleDeleteItem('${item.arquivo}')" title="Apagar este item">
+              <i class="fas fa-trash"></i>
+          </button>
       </div>
     </div>
   `;
@@ -222,6 +227,31 @@ window.showItemPreviewFromStatus = function(item) {
   if (window.itemPreviewModal) {
     const monitorName = getMonitorLabel(item.id_monitor || item.monitorId);
     window.itemPreviewModal.show(item, monitorName, null);
+  }
+};
+
+window.handleDeleteItem = async function(filename) {
+  if (confirm(`Tem certeza que deseja apagar o ficheiro "${filename}"?\n\nEsta ação não pode ser desfeita.`)) {
+    const statusDiv = document.getElementById('save-status');
+    statusDiv.textContent = `Apagando "${filename}"...`;
+    statusDiv.className = 'dashboard-save-actions__status info';
+    statusDiv.style.display = 'block';
+
+    const result = await window.playlistService.deleteMediaItem(filename);
+
+    if (result.success) {
+      statusDiv.textContent = result.message;
+      statusDiv.className = 'dashboard-save-actions__status success';
+      
+      // Força a recarga da lista de monitores para refletir a exclusão
+      setTimeout(() => {
+          location.reload(); 
+      }, 1500);
+
+    } else {
+      statusDiv.textContent = `Erro: ${result.message}`;
+      statusDiv.className = 'dashboard-save-actions__status error';
+    }
   }
 };
 

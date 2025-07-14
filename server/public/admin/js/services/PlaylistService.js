@@ -2,7 +2,7 @@ import { Playlist, PlaylistItem } from '../models/Playlist.js';
 
 export class PlaylistService {
   constructor() {
-    this.baseUrl = '/api';
+this.baseUrl = '/Painel-Informativo/server/api';
   }
 
   async getPlaylist() {
@@ -163,6 +163,26 @@ export class PlaylistService {
         success: false,
         message: `Erro ao remover item: ${error.message}`
       };
+    }
+  }
+  async deleteMediaItem(filename) {
+    try {
+      const response = await fetch(`${this.baseUrl}/delete_media.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ filename: filename })
+      });
+      const result = await response.json();
+      if (response.ok && result.success) {
+        return { success: true, message: result.message };
+      } else {
+        return { success: false, message: result.message || 'Erro desconhecido ao apagar.' };
+      }
+    } catch (error) {
+      console.error('Erro ao apagar item de mídia:', error);
+      return { success: false, message: 'Erro de conexão ao tentar apagar.' };
     }
   }
 }

@@ -34,7 +34,7 @@ define('PLAYLIST_FILENAME', 'playlist.json');
 if (ENVIRONMENT === 'production') {
     define('HTTP_MEDIA_BASE_URL', 'http://' . FTP_SERVER . rtrim(FTP_CONTENT_DIR, '/') . '/');
 } else {
-    define('HTTP_MEDIA_BASE_URL', 'http://localhost/Painel-Informativo/conteudo_simulado_ftp/');
+    define('HTTP_MEDIA_BASE_URL', 'http://54.233.18.117/Painel-Informativo/conteudo_simulado_ftp/');
 }
 
 // Credenciais do painel de administração
