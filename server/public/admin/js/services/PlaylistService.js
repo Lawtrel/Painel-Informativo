@@ -33,35 +33,36 @@ this.baseUrl = '/Painel-Informativo/server/api';
     }
   }
 
-  async uploadFile(file, filename) {
+  async uploadFile(file, filename, monitorId) { // Adicionado monitorId
     try {
       const formData = new FormData();
       formData.append('filesToUpload[]', file, filename);
-      
+      formData.append('monitorId', monitorId); // Envia o ID do monitor
+
       const response = await fetch(`${this.baseUrl}/upload_handler.php`, {
         method: 'POST',
         body: formData
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success && data.uploaded_files && data.uploaded_files[0] && data.uploaded_files[0].status === 'success') {
-        return { 
-          success: true, 
-          filename: data.uploaded_files[0].filename,
-          message: 'Arquivo enviado com sucesso'
+        return {
+          success: true,
+          filename: data.uploaded_files[0].filename, // Recebe o novo nome do backend
+          message: 'Ficheiro enviado com sucesso'
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           filename: null,
-          message: data.message || 'Erro ao enviar arquivo'
+          message: data.message || 'Erro ao enviar ficheiro'
         };
       }
     } catch (error) {
       console.error('Erro no upload:', error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         filename: null,
         message: 'Erro ao conectar com o servidor'
       };
@@ -75,7 +76,7 @@ this.baseUrl = '/Painel-Informativo/server/api';
       
       for (const item of pendingItems) {
         if (item.canBeSent()) {
-          const uploadResult = await this.uploadFile(item.file, item.arquivo);
+          const uploadResult = await this.uploadFile(item.file, item.arquivo, item.monitorId);
           
           if (uploadResult.success) {
             item.markAsSent(uploadResult.filename);

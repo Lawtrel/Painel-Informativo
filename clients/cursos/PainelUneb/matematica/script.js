@@ -3,8 +3,7 @@ async function iniciarPainel() {
     // --- PASSO MAIS IMPORTANTE: DEFINA O ID DO MONITOR AQUI ---
     // Altere este número para cada painel. Use o ID correspondente
     // que aparece no painel de administração.
-    // Exemplo: 0 para TCC, 1 para Biologia, 3 para Eng. de Software, etc.
-    const idDoMonitorAtual = 4; // <<<<<<< ALTERE ESTE NÚMERO PARA CADA PAINEL
+    const idDoMonitorAtual = 0; // <<<<<<< ALTERE ESTE NÚMERO PARA CADA PAINEL
 
     const painelContainer = document.querySelector('.painel-imagem');
     if (!painelContainer) {

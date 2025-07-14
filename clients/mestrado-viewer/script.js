@@ -1,6 +1,6 @@
 // Funções para gerenciar dados no localStorage
 const STORAGE_KEY = 'mestradoData';
-
+//5
 /**
  * Salva os dados do mestrado no localStorage.
  * @param {object} data - O objeto com os dados do mestrado a serem salvos.
