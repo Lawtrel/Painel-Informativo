@@ -1,102 +1,68 @@
-// client_display/display.js
 document.addEventListener('DOMContentLoaded', () => {
-    const monitor0Display = document.getElementById('monitor0-display');
+    const displayContainer = document.getElementById('monitor0-display');
     const loadingMessage = document.querySelector('.loading-message');
-    let currentPlaylistData = null;
-    let monitor0Items = [];
-    let currentItemIndex = 0;
-    let itemTimeoutId = null; // Para controlar o setTimeout
+    let todosOsItens = [];
+    let indiceItemAtual = 0;
 
-    async function fetchAndDisplayPlaylist() {
+    async function fetchAndDisplayAll() {
         try {
-            loadingMessage.textContent = 'Carregando anúncios...';
-            const response = await fetch('../api/get_content.php'); // Caminho para a API
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
+            loadingMessage.textContent = 'Carregando conteúdo de todos os painéis...';
+            const response = await fetch('/Painel-Informativo/conteudo_simulado_ftp/playlist.json');
+            if (!response.ok) throw new Error(`Erro na rede: ${response.status}`);
 
-            if (result.success && result.data) {
-                loadingMessage.style.display = 'none';
-                currentPlaylistData = result.data;
-                
-                const monitor0Data = currentPlaylistData.monitores.find(m => m.id_monitor === 0);
-                
-                if (monitor0Data && monitor0Data.itens && monitor0Data.itens.length > 0) {
-                    monitor0Items = monitor0Data.itens;
-                    currentItemIndex = 0; // Reinicia o índice
-                    if (itemTimeoutId) clearTimeout(itemTimeoutId); // Limpa timeout anterior se houver
-                    displayNextItem();
-                } else {
-                    showError('Nenhum item encontrado para o monitor 0 na playlist.');
-                }
+            const playlist = await response.json();
+            loadingMessage.style.display = 'none';
+
+            // Junta todos os itens de todos os monitores numa única lista
+            todosOsItens = playlist.monitores.flatMap(monitor => monitor.itens || []);
+
+            if (todosOsItens.length > 0) {
+                exibirProximoItem();
             } else {
-                showError(`Erro ao carregar playlist: ${result.error || 'Formato de resposta inválido.'}`);
+                displayContainer.innerHTML = '<p>Nenhum conteúdo encontrado na playlist.</p>';
             }
+
         } catch (error) {
-            showError(`Erro na requisição da playlist: ${error.message}`);
+            loadingMessage.style.display = 'none';
+            displayContainer.innerHTML = `<p style="color:red;">Erro ao carregar a playlist: ${error.message}</p>`;
         }
     }
 
-    function displayNextItem() {
-        if (monitor0Items.length === 0) return;
+    function exibirProximoItem() {
+        if (todosOsItens.length === 0) return;
 
-        // Limpa conteúdo anterior do display
-        monitor0Display.innerHTML = ''; 
+        const item = todosOsItens[indiceItemAtual];
+        const urlBaseMidia = "http://54.233.18.117/conteudo_simulado_ftp/"; // URL base explícita
+        displayContainer.innerHTML = ''; // Limpa o conteúdo anterior
 
-        const item = monitor0Items[currentItemIndex];
-        const mediaBaseUrl = currentPlaylistData.config_geral?.url_base_midia_http || '';
-
+        let elemento;
         if (item.tipo === 'imagem') {
-            const img = document.createElement('img');
-            // Usa item.url_http se já vier da API, senão constrói com base_url + arquivo
-            img.src = item.url_http || (mediaBaseUrl + item.arquivo);
-            img.alt = item.arquivo || 'Imagem do anúncio';
-            monitor0Display.appendChild(img);
-        } else if (item.tipo === 'texto_simples') {
-            const textDiv = document.createElement('div');
-            textDiv.classList.add('text-item');
-            textDiv.textContent = item.mensagem || 'Mensagem não definida';
-            textDiv.style.backgroundColor = item.cor_fundo || '#000000';
-            textDiv.style.color = item.cor_texto || '#FFFFFF';
-            monitor0Display.appendChild(textDiv);
+            elemento = document.createElement('img');
+            elemento.src = urlBaseMidia + item.arquivo;
+            elemento.alt = item.arquivo;
         } else if (item.tipo === 'video') {
-            // Simulação básica para vídeo, pode não ter autoplay ou controles no XAMPP facilmente
-            const videoPlaceholder = document.createElement('div');
-            videoPlaceholder.classList.add('text-item');
-            videoPlaceholder.textContent = `Vídeo: ${item.arquivo || 'video_anuncio.mp4'} (duração: ${item.duracao_s}s)`;
-            videoPlaceholder.style.backgroundColor = '#111';
-            videoPlaceholder.style.color = '#FFF';
-            monitor0Display.appendChild(videoPlaceholder);
-            // Para vídeo real:
-            // const video = document.createElement('video');
-            // video.src = item.url_http || (mediaBaseUrl + item.arquivo);
-            // video.autoplay = true; // Pode ser bloqueado pelo navegador
-            // video.loop = false;
-            // video.muted = true; // Autoplay geralmente requer mudo
-            // video.style.maxWidth = '100%';
-            // video.style.maxHeight = '100%';
-            // monitor0Display.appendChild(video);
-        } else {
-            const unknownDiv = document.createElement('div');
-            unknownDiv.classList.add('text-item');
-            unknownDiv.textContent = `Tipo de item desconhecido: ${item.tipo}`;
-            monitor0Display.appendChild(unknownDiv);
+            elemento = document.createElement('video');
+            elemento.src = urlBaseMidia + item.arquivo;
+            elemento.autoplay = true;
+            elemento.muted = true;
+            elemento.loop = true;
+        } else if (item.tipo === 'texto_simples') {
+            elemento = document.createElement('div');
+            elemento.className = 'text-item';
+            elemento.textContent = item.mensagem;
+            elemento.style.backgroundColor = item.cor_fundo || '#000';
+            elemento.style.color = item.cor_texto || '#fff';
         }
 
-        const duration = (parseInt(item.duracao_s) || 10) * 1000; // Converte para milissegundos
+        if (elemento) {
+            displayContainer.appendChild(elemento);
+        }
 
-        currentItemIndex = (currentItemIndex + 1) % monitor0Items.length; // Avança e faz loop
+        const duracaoMs = (item.duracao_s || 10) * 1000;
+        indiceItemAtual = (indiceItemAtual + 1) % todosOsItens.length; // Avança e faz loop
 
-        itemTimeoutId = setTimeout(displayNextItem, duration);
+        setTimeout(exibirProximoItem, duracaoMs);
     }
 
-    function showError(message) {
-        loadingMessage.style.display = 'none'; // Esconde msg de carregamento se estiver visível
-        monitor0Display.innerHTML = `<p style="color:red; font-size:1.2em;">${message}</p>`;
-    }
-
-    // Inicia o processo e configura para recarregar a playlist periodicamente
-    fetchAndDisplayPlaylist();
-    setInterval(fetchAndDisplayPlaylist, 60000); // Recarrega a playlist a cada 60 segundos
+    fetchAndDisplayAll();
 });
